@@ -24,8 +24,17 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 | [fixture の出自を証明する](docs/verification/fixture-provenance.ja.md) | `feedback_prove_replay_fixture_was_rerecorded_by_pairing_with_old_code` | #3190 #3189 #3195 #3183 |
 | [一括修正 PR のレビュー](docs/verification/sweep-reviews.ja.md) | `feedback_sweep_pr_review_the_untouched_decision_is_invisible_in_the_diff` | #3186 |
 | [共有ヘルパーの意味論拡大](docs/verification/shared-helper-widening.ja.md) | `feedback_shared_accessor_must_not_outopinion_least_opinionated_caller` | #2947 |
+| [監査は内容を照合する](docs/verification/audit-content-match.ja.md) | `feedback_audit_status_not_existence` / `feedback_drift_audit_content_match_not_line_existence` / `feedback_doc_mirror_claim_needs_impl_verify` | #1522 |
+| [修正は生きた経路で証明する](docs/verification/fix-verification-live-path.ja.md) | `feedback_verify_dispatched_bug_is_active_before_fixing` / `feedback_verify_fix_through_declaration_consumer_not_gate_alone` / `feedback_covet_falsify_owner_actual_path_not_test_covered_sibling` | #2413 #2788 #2786 |
+| [検証ラン自体の生存確認](docs/verification/verification-run-liveness.ja.md) | `feedback_track_background_verification_hang_not_slow` | #2259 |
+| [文脈を持たない主張](docs/verification/cross-context-claims.ja.md) | `feedback_hedge_impl_dependent_design_steers` / `feedback_subagent_audit_verdict_needs_owner_context_regrounding` / `feedback_completion_report_must_match_owner_intended_architecture` | #2248 #2246 #1765 |
+| [やり残しは欠陥の発見を遅らせる](docs/verification/incomplete-work.ja.md) | `feedback_incomplete_work_delays_defect_discovery` | #1505 #1317 |
+| [正常系の外を踏む](docs/verification/beyond-happy-path.ja.md) | `feedback_review_error_runtime_paths_not_just_happy_structural` / `feedback_live_verify_read_whole_frame_not_just_feature` | #2195 #2238 |
+| [復旧の源は破壊を生き残るか](docs/verification/recovery-truncation.ja.md) | `feedback_recovery_source_must_survive_truncation_review_gate` | #2259 #2260 |
 
-ソースの consolidator: `feedback_verification_blind_spot_family`(memory-curator dir)。同 family の 16 pin を上記 13 doc に統合した(2026-07-30 時点)。
+fixture-provenance には `feedback_verify_failure_claims_by_observation_not_inference`(#1800 #2059 #2060)を追記統合。
+
+ソースの consolidator: `feedback_verification_blind_spot_family`(16 pin → 13 doc、2026-07-30)および `feedback_verification_discipline_family`(15 pin → 新規 7 doc + fixture-provenance 追記、2026-07-30)。いずれも memory-curator dir。
 
 ## docs/git-github/(Tier 2 — エージェント駆動 git/CI 運用)— 未着手
 
