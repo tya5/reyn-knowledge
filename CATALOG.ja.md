@@ -7,6 +7,8 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 
 ## docs/verification/(Tier 1 — AI 生成物の検証パターン)
 
+体系マップ: [検証ナレッジの体系](docs/verification/index.ja.md)(13 doc のパイプライン配置と横断4原理。ソース pin なしのメタ文書)
+
 | ドキュメント | ソース pin | 主な出典 issue |
 |---|---|---|
 | [strip 反証の規律](docs/verification/strip-falsification.ja.md) | `feedback_strip_falsify_all_sibling_guard_sites_not_just_one` / `feedback_witness_must_assert_a_value_a_dead_mechanism_cannot_produce` / `feedback_bound_test_must_flip_under_strip` | #2900 #2903 #3159 #3189 #3195 #2825 |
