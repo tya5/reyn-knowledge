@@ -24,8 +24,17 @@ Map: [The system of verification knowledge](docs/verification/index.md) (pipelin
 | [Proving fixture provenance](docs/verification/fixture-provenance.md) | `feedback_prove_replay_fixture_was_rerecorded_by_pairing_with_old_code` | #3190 #3189 #3195 #3183 |
 | [Reviewing sweep PRs](docs/verification/sweep-reviews.md) | `feedback_sweep_pr_review_the_untouched_decision_is_invisible_in_the_diff` | #3186 |
 | [Shared-helper widening](docs/verification/shared-helper-widening.md) | `feedback_shared_accessor_must_not_outopinion_least_opinionated_caller` | #2947 |
+| [Audits must match content](docs/verification/audit-content-match.md) | `feedback_audit_status_not_existence` / `feedback_drift_audit_content_match_not_line_existence` / `feedback_doc_mirror_claim_needs_impl_verify` | #1522 |
+| [Prove fixes on the live path](docs/verification/fix-verification-live-path.md) | `feedback_verify_dispatched_bug_is_active_before_fixing` / `feedback_verify_fix_through_declaration_consumer_not_gate_alone` / `feedback_covet_falsify_owner_actual_path_not_test_covered_sibling` | #2413 #2788 #2786 |
+| [Liveness of the verification run](docs/verification/verification-run-liveness.md) | `feedback_track_background_verification_hang_not_slow` | #2259 |
+| [Claims without context](docs/verification/cross-context-claims.md) | `feedback_hedge_impl_dependent_design_steers` / `feedback_subagent_audit_verdict_needs_owner_context_regrounding` / `feedback_completion_report_must_match_owner_intended_architecture` | #2248 #2246 #1765 |
+| [Incomplete work delays discovery](docs/verification/incomplete-work.md) | `feedback_incomplete_work_delays_defect_discovery` | #1505 #1317 |
+| [Beyond the happy path](docs/verification/beyond-happy-path.md) | `feedback_review_error_runtime_paths_not_just_happy_structural` / `feedback_live_verify_read_whole_frame_not_just_feature` | #2195 #2238 |
+| [Recovery must survive truncation](docs/verification/recovery-truncation.md) | `feedback_recovery_source_must_survive_truncation_review_gate` | #2259 #2260 |
 
-Source consolidator: `feedback_verification_blind_spot_family` (memory-curator dir). The family's 16 pins were consolidated into the 13 docs above (as of 2026-07-30).
+fixture-provenance additionally consolidates `feedback_verify_failure_claims_by_observation_not_inference` (#1800 #2059 #2060).
+
+Source consolidators: `feedback_verification_blind_spot_family` (16 pins → 13 docs, 2026-07-30) and `feedback_verification_discipline_family` (15 pins → 7 new docs + the fixture-provenance extension, 2026-07-30). Both in the memory-curator dir.
 
 ## docs/git-github/ (Tier 2 — agent-driven git/CI operation hazards) — not started
 

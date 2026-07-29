@@ -4,6 +4,7 @@ description: The claim "I re-recorded the fixtures" can be proven by pairing the
 tags: [verification, testing, fixtures, llm]
 sources:
   - feedback_prove_replay_fixture_was_rerecorded_by_pairing_with_old_code
+  - feedback_verify_failure_claims_by_observation_not_inference
 ---
 
 # Proving Fixture Provenance — Verify "I Re-Recorded It" Without Trusting the Claim
@@ -58,6 +59,15 @@ The settlement procedure:
 
 Generalization: **before reading green/red, confirm "did it run with the same order and the same seed?" Even if the measured target is the same, a different order is a different experiment.**
 
+### Do not co-sign by inference — only observation settles a failure
+
+**Co-signing** a peer's "pre-existing failure" claim by inference falls into the same hole. Real case: presented with a peer's report that "the 4 failures are pre-existing," a reviewer confirmed by grep that an old deprecated pattern **existed** in that test file and signed off "agreed, pre-existing" — without ever **running the suite to observe** the failures. A later clean-environment run showed **everything passes; main had been green the whole time**. Moreover, a second verifier's own "4 failures" were **a different four**, which they too retracted as contamination of their local environment (a stale editable-install remnant and a leftover `.pyc` directory causing wrong module resolution).
+
+- **CI green (a clean, fixed environment) is the court of last resort for whether a failure is real.** A local full-suite run carries the runner's contamination and cannot settle the question alone.
+- **Different verifiers reporting different failure sets is a strong tell of environment contamination**, not evidence of a regression.
+- A grep showing that a plausible cause **exists** in the code is **inference, not observation** (the failure-side twin of [Audits must match content](audit-content-match.md)).
+- **Do not file a tracking issue until the failure reproduces in a clean environment or is confirmed in CI** (false issues spend other people's time).
+
 ## Checklist
 
 - [ ] For a PR that changes text reaching the LLM, did you state the need for fixture re-recording **at delegation time**?
@@ -67,7 +77,7 @@ Generalization: **before reading green/red, confirm "did it run with the same or
 
 ## Sources (measured during reyn development)
 
-Experiment ② and its general form: #3190 (tool-description change → replay key change; the architect measured failed with old `io.py` + new fixtures). Settled as PR-caused with CI as evidence: #3189/#3190. The third, order-dependent category and the P−M protocol: #3195 (confirmed P−M = 0 every time across 3 seeds × 2 independent worktrees). Eliminating the hand-edit path, and the isomorphic fake→real prescription: #3183.
+Experiment ② and its general form: #3190 (tool-description change → replay key change; the architect measured failed with old `io.py` + new fixtures). Settled as PR-caused with CI as evidence: #3189/#3190. The third, order-dependent category and the P−M protocol: #3195 (confirmed P−M = 0 every time across 3 seeds × 2 independent worktrees). Eliminating the hand-edit path, and the isomorphic fake→real prescription: #3183. Co-signing by inference and per-environment phantom failures (two verifiers reported two different "4 failures"; clean env all green): #1800/#2059/#2060.
 
 ## Related
 

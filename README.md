@@ -25,7 +25,7 @@ skills/             # executable checklists / Claude Code skills (planned)
 CATALOG.md          # index of all documents + source mapping
 ```
 
-Start with [the map of the verification knowledge](docs/verification/index.md) — it lays out how the 13 documents form a pipeline of "what to doubt, in what order, between a completion report and the merge," plus the four principles that cut across all of them. For standalone reading, [The discipline of strip-falsification](docs/verification/strip-falsification.md) and [Structural blindness of the verification environment](docs/verification/environment-blindness.md) are representative.
+Start with [the map of the verification knowledge](docs/verification/index.md) — it lays out how the 20 documents form a pipeline of "what to doubt, in what order, between a completion report and the merge," plus the four principles that cut across all of them. For standalone reading, [The discipline of strip-falsification](docs/verification/strip-falsification.md) and [Structural blindness of the verification environment](docs/verification/environment-blindness.md) are representative.
 
 ## Languages
 
