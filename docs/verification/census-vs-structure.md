@@ -72,7 +72,7 @@ The worst path by which a census premise gets fossilized:
 
 > **Incomplete enumeration → false assertion → the assertion gets documented → it becomes the next reader's premise.**
 
-Real case: the comment "this value is wired up by the OpContext builders" was written while the enumeration was incomplete. **That comment became the next implementer's premise**; a feature was built on top of a recording mechanism that did not exist, and **with 8540 tests and CI all green, production was recording nothing**.
+Real case: the comment "this value is wired up by the context builders" was written while the enumeration was incomplete. **That comment became the next implementer's premise**; a feature was built on top of a recording mechanism that did not exist, and **with 8540 tests and CI all green, production was recording nothing**.
 
 All six defects surfaced in a single day had this shape: a comment assuming wiring / a function **name** assuming execution (`install_seccomp_filter` merely "returns an installer," and both call sites discarded the return value = never once loaded in production) / a comment assuming a value range ("scores are in [0.0, 1.0]" is not a validator) / warning text assuming a fallback that never happens / a PR body assuming reachability (in reality a different field is read) / an old lie surviving in the documentation.
 

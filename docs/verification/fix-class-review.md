@@ -46,7 +46,7 @@ For the census/structural classification of the rationale itself, see [Census vs
 
 ## Sources (measured during reyn development)
 
-#2937/#2938 (predicate helper introduced, applied in one place, passed review) → #2948 (seven sibling sites, including O(WAL²) on the cold-start path; the sites in the request were all wrong, grep had the right answer). Real case of a census rationale and the true structural rationale: #2945.
+#2937/#2938 (predicate helper introduced, applied in one place, passed review) → #2948 (seven sibling sites, including O(n²) on the cold-start path; the sites in the request were all wrong, grep had the right answer). Real case of a census rationale and the true structural rationale: #2945.
 
 ## Related
 
