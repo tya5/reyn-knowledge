@@ -1,0 +1,43 @@
+# CATALOG — 全ドキュメント索引と出典対応表
+
+このファイルは、各ドキュメントとソース(reyn 開発のクロスセッション記憶 pin)の対応を管理する。
+reyn 側の pin は今後も増え続けるため、この表が定期同期の基準になる: 新しい pin が Tier 1〜3 に該当するなら、既存 doc への追記か新規 doc を判断し、ここに行を足す。
+
+言語規約: `.md` = 英語、`.ja.md` = 日本語。日本語を先に書き、英語版を後追いで同期する。
+
+## docs/verification/(Tier 1 — AI 生成物の検証パターン)
+
+| ドキュメント | ソース pin | 主な出典 issue |
+|---|---|---|
+| [strip 反証の規律](docs/verification/strip-falsification.ja.md) | `feedback_strip_falsify_all_sibling_guard_sites_not_just_one` / `feedback_witness_must_assert_a_value_a_dead_mechanism_cannot_produce` / `feedback_bound_test_must_flip_under_strip` | #2900 #2903 #3159 #3189 #3195 #2825 |
+| [strip 計測器自体の健全性](docs/verification/strip-instrument-integrity.ja.md) | `feedback_strip_anchor_must_be_unique_or_it_kills_the_wrong_call_site` / `feedback_verify_venv_identity_at_measurement_time_not_by_central_audit` | #3310 #3341 #3363 #3370 #3389 |
+| [配線テストと機構テスト](docs/verification/wiring-vs-mechanism.ja.md) | `feedback_wiring_test_strip_production_callsite_not_mechanism` | #2788 #2801 #2802 #3383 #3385 |
+| [空虚なゲートの生まれ方](docs/verification/vacuous-gates.ja.md) | `feedback_gate_vacuity_hides_in_terminal_state_only_assertions` / `feedback_containment_gate_must_cover_both_axes_and_children` | #3288 #3299 #3358 #3363 #3370 #3311 #3337 #3341 |
+| [検証環境の構造的盲目](docs/verification/environment-blindness.ja.md) | `feedback_verification_environment_structurally_blind` | #2975 #2962 #2965 #2952 #2973 #2982 #2978 #2981 |
+| [census と structure](docs/verification/census-vs-structure.ja.md) | `feedback_census_vs_structure_definition_and_checked_premises` / `feedback_perf_fix_needs_fixclass_question_not_correctness_frame`(census 部分) | #2945 #2949 #2962 #2963 #2961 #2960 #2958 |
+| [列挙の規律](docs/verification/enumeration-discipline.ja.md) | `feedback_census_vs_structure_definition_and_checked_premises`(§4)/ `feedback_measured_but_the_target_was_off_my_four_instances`(面の定義部分)/ `feedback_perf_fix_needs_fixclass_question_not_correctness_frame`(grep 権威部分) | #2958 #2965 #2981 #2951 #3429 #3463 |
+| [fix-class レビュー](docs/verification/fix-class-review.ja.md) | `feedback_perf_fix_needs_fixclass_question_not_correctness_frame` | #2937 #2938 #2948 #2945 |
+| [生死は producer で判定する](docs/verification/liveness-is-producer.ja.md) | `feedback_liveness_is_producer_not_reader` | 2026-07-04 skill 掃討, #3357 #3410 #3432 #3433 #3437 |
+| [測定対象のずれ](docs/verification/measurement-target.ja.md) | `feedback_measured_but_the_target_was_off_my_four_instances` | #3437 #3433 #3411 #3458 #3459 #3461 #3429 #3463 |
+| [fixture の出自を証明する](docs/verification/fixture-provenance.ja.md) | `feedback_prove_replay_fixture_was_rerecorded_by_pairing_with_old_code` | #3190 #3189 #3195 #3183 |
+| [一括修正 PR のレビュー](docs/verification/sweep-reviews.ja.md) | `feedback_sweep_pr_review_the_untouched_decision_is_invisible_in_the_diff` | #3186 |
+| [共有ヘルパーの意味論拡大](docs/verification/shared-helper-widening.ja.md) | `feedback_shared_accessor_must_not_outopinion_least_opinionated_caller` | #2947 |
+
+ソースの consolidator: `feedback_verification_blind_spot_family`(memory-curator dir)。同 family の 16 pin を上記 13 doc に統合した(2026-07-30 時点)。
+
+## docs/git-github/(Tier 2 — エージェント駆動 git/CI 運用)— 未着手
+
+候補 pin(棚卸しメモより、約28件): `closing_keyword_in_backticks` / `gh_merge_leaves_local_tree_stale` / `line_numbers_not_identifiers` / `merge_order_signature_conflict` / `outstanding_item_must_live_where_gate_reads` ほか。
+
+## docs/orchestration/(Tier 3 — マルチエージェント運用)— 未着手
+
+候補 pin(約14件): `background_pytest_poll_stall` / `review_menu_before_standby` / `peer_silent_stall_detection` / `shared_venv_worktree_identity`(一部は Tier 1 側で言及済み)ほか。
+
+## skills/ — 未着手
+
+実務性の高いものから checklist / skill 化する(Tier 2 の closing-keyword・merge-gate 系が有力)。
+
+## 出典の記法について
+
+- 本文中の `#NNNN` は、母体プロジェクト reyn(AI エージェントランタイム。ほぼ全開発をコーディングエージェントの fleet が実施)の PR / issue 番号。出典の透明性のため削除しない。
+- pin 名は reyn 側セッションの memory ディレクトリ(`~/.claude/projects/-…-reyn-dev-<session>/memory/`)のファイル名。

@@ -1,0 +1,62 @@
+---
+name: shared-helper-widening
+description: N 個のインラインチェックを1つの共有ヘルパーに畳むと、ヘルパーが「最も無主張な呼び出し元」より主張が強い場合に意味論が黙って広がる — 誰も否定形を assert していないので、テストでは捕まらない
+tags: [verification, refactoring, review]
+sources:
+  - feedback_shared_accessor_must_not_outopinion_least_opinionated_caller
+---
+
+# 共有ヘルパーの意味論拡大 — 統合は「最も慎重な呼び出し元」に合わせる
+
+## 問題の形
+
+リファクタリングの定番に「N 箇所のインラインチェックを1つの共有ヘルパーに畳む」がある(例外タプルの構築、設定の参照、述語ビルダー)。このとき守るべき規則:
+
+> **ヘルパーは、最も主張の弱い(least-opinionated)呼び出し元より主張が強くなってはならない。** さもないと、狭い集合を望んでいた呼び出し元の意味論が黙って**広がる**。
+
+## 実例
+
+遅延 import される HTTP ライブラリの例外クラスを、2つの呼び出し元が使っていた:
+
+- 呼び出し元A(リトライ判定): `(ConnectError, ReadTimeout)` の**両方**を捕まえたい
+- 呼び出し元B(タイムアウト分類): **`ReadTimeout` だけ**を捕まえたい
+
+ここで「共有ヘルパーが `(ConnectError, ReadTimeout)` のタプルを返す」設計にすると、diff は最短で、**テストも全部緑のまま**通る。しかしその瞬間から、呼び出し元Bでは **`ConnectError`(接続失敗)が「タイムアウト」に分類され**、タイムアウト専用のポリシー(自動延長・対話確認)にルーティングされる。意味論が黙って広がった。
+
+なぜレビューで生き残るのか:
+
+> **誰も否定形を assert していないからである。**「ConnectError はタイムアウトでは**ない**」というテストは、普通は存在しない。緑のスイートは何の証拠にもならない — **欠けているテストこそが問題そのもの**なのだから。
+
+## 設計の形
+
+実際に採られた修正は、ヘルパーが**構成要素を別々に返し、各呼び出し元に自分の部分集合を選ばせる**形である:
+
+```python
+def _get_httpx_exc_types():
+    import httpx
+    return httpx.ConnectError, httpx.ReadTimeout
+
+# 呼び出し元A(リトライ判定): 両方使う
+connect_err, read_timeout = _get_httpx_exc_types()
+retryable = isinstance(e, (connect_err, read_timeout))
+
+# 呼び出し元B(タイムアウト分類): 狭い側を自分で選ぶ
+_, read_timeout = _get_httpx_exc_types()
+is_timeout = isinstance(e, read_timeout)
+```
+
+## How to apply
+
+- **ヘルパーを設計する前に、全呼び出しサイトを読む。** 形は「呼び出し元が消費するものの和集合」ではなく「**呼び出し元が区別する必要があるものの和集合**」に合わせる。
+- この種の PR をレビューするときは、畳まれた各サイトについて問う: **「このサイトは以前、ヘルパーが今は塗りつぶしてしまう何かを区別していなかったか?」**
+- **理由はヘルパーの docstring に書く。commit メッセージではなく。** 3番目の呼び出し元を追加しに来る次の人が読むのは docstring である。
+
+## 出典(reyn 開発での実測)
+
+#2947(httpx 遅延 import の統合。事前タプル共有案なら全テスト緑のまま ConnectError がタイムアウト扱いになっていた)。
+
+## 関連
+
+- [fix-class レビュー](fix-class-review.ja.md) — 統合の危険は常に、それが平坦化する呼び出しサイトにある
+- [census と structure](census-vs-structure.ja.md) — 「今日の呼び出し元はこう使っている」という census 前提
+- [空虚なゲートの生まれ方](vacuous-gates.ja.md) — 否定形の assert が存在しない、という同族の穴
