@@ -19,13 +19,13 @@ AI コーディングエージェント(Claude Code 等)の fleet(複数エー�
 ```
 docs/
 ├── verification/   # Tier 1: AI 生成物の検証パターン(strip 反証・空虚なゲート・census/structure(根拠の2分類)等)
-├── git-github/     # Tier 2: エージェント駆動 git/CI 運用の罠(予定)
+├── git-github/     # Tier 2: エージェント駆動 git/CI 運用の罠(closing keyword・stale local・マージゲート等)
 └── orchestration/  # Tier 3: マルチエージェント fleet 運用(予定)
-skills/             # 実行可能な checklist / Claude Code skill(予定)
+skills/             # 実行可能な checklist(第1弾: closing-keyword-check)
 CATALOG.md          # 全ドキュメント索引 + 出典対応表
 ```
 
-入口は[検証ナレッジの体系マップ](docs/verification/index.ja.md) — 25本のドキュメントが「完了報告をマージするまでに何をどの順で疑うか」のパイプラインとしてどう配置されるか、および横断する4原理をまとめてある。coder / tester / reviewer を別エージェントに分ける標準的な運用に向けては、[役割分離運用の実務](docs/verification/roles.ja.md)が全体系を役割ごとの義務(coder の報告契約・tester の反証メニュー・reviewer の独立検証・マージゲート)に組み直している。個別に読むなら [strip 反証の規律](docs/verification/strip-falsification.ja.md) と [検証環境の構造的盲目](docs/verification/environment-blindness.ja.md) が代表格。
+入口は[検証ナレッジの体系マップ](docs/verification/index.ja.md) — 25本のドキュメントが「完了報告をマージするまでに何をどの順で疑うか」のパイプラインとしてどう配置されるか、および横断する4原理をまとめてある。coder / tester / reviewer を別エージェントに分ける標準的な運用に向けては、[役割分離運用の実務](docs/verification/roles.ja.md)が全体系を役割ごとの義務(coder の報告契約・tester の反証メニュー・reviewer の独立検証・マージゲート)に組み直している。個別に読むなら [strip 反証の規律](docs/verification/strip-falsification.ja.md) と [検証環境の構造的盲目](docs/verification/environment-blindness.ja.md) が代表格。git/GitHub 運用側は [Tier 2 の地図](docs/git-github/index.ja.md)から。
 
 ## 言語
 

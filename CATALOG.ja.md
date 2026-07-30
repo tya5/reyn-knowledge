@@ -43,9 +43,20 @@ fixture-provenance には `feedback_verify_failure_claims_by_observation_not_inf
 
 ソースの consolidator: `feedback_verification_blind_spot_family`(16 pin → 13 doc、2026-07-30)および `feedback_verification_discipline_family`(15 pin → 新規 7 doc + fixture-provenance 追記、2026-07-30)。いずれも memory-curator dir(pin を整理する担当セッションのディレクトリ)。第3弾(2026-07-30)は family 化されていない単発 pin 15 件 → 3 doc(緑を読む技術 / テストの偽物 / 削除の検証)。第4弾(2026-07-30)は 16 pin → 2 doc(完全性掃討の実務 / 論拠の衛生)。**これで Tier1 のコア(計 66 pin → 25 doc + 体系マップ + 役割マップ)は完了**(表中の roles は役割マップとして別掲)。
 
-## docs/git-github/(Tier 2 — エージェント駆動 git/CI 運用)— 未着手
+## docs/git-github/(Tier 2 — エージェント駆動 git/CI 運用)
 
-候補 pin(棚卸しメモより、約28件): `closing_keyword_in_backticks` / `gh_merge_leaves_local_tree_stale` / `line_numbers_not_identifiers` / `merge_order_signature_conflict` / `outstanding_item_must_live_where_gate_reads` ほか。
+地図: [git/GitHub 運用の罠](docs/git-github/index.ja.md)(6 doc の構造。メタ文書)
+
+| ドキュメント | ソース pin | 主な出典 issue |
+|---|---|---|
+| [closing keyword は字面で発火する](docs/git-github/closing-keywords.ja.md) | `feedback_closing_keyword_in_backticks_is_not_parsed` / `feedback_github_closing_keyword_matches_literal_ignores_context` / `feedback_enumerate_part_of_prs_before_authorizing_a_closing_keyword` | #2951 #2990 #3003 #3006 #3187 #3432 #3462 #3043 #3368 #3015 |
+| [ローカルは黙って古くなる](docs/git-github/stale-local.ja.md) | `feedback_gh_merge_leaves_local_tree_stale_sync_before_local_grep` / `feedback_sync_local_main_before_sequential_worktree_dispatch` / `feedback_local_checkout_branch_instability` / `feedback_multiref_fetchhead_resolves_to_first_ref_not_branch` / `feedback_line_numbers_are_not_identifiers_across_a_moving_main` | #3385 #3149 #2817 #2919 #1069 #2818 #3082 #3213 |
+| [並行エージェントと git](docs/git-github/worktree-parallel.ja.md) | `feedback_parallel_coders_shared_central_file_hazard` / `feedback_same_role_concurrent_session_branch_divergence` / `feedback_explicit_git_add_not_blanket_in_artifact_heavy_session` / `feedback_verify_pushed_tree_matches_working_tree_before_pr` / `feedback_falsify_restore_never_git_checkout_uncommitted` / `feedback_rename_refactor_i001_full_scope_ruff` | #2681 #2838 #1502 #2187 #1685 #1687 |
+| [マージは状態で確認する](docs/git-github/merge-gates.ja.md) | `feedback_confirm_merge_before_merged_ack` / `feedback_verify_merge_state_not_impl_complete_claim` / `feedback_kill_automerge_poll_before_reversing_merge_decision` / `feedback_merge_order_signature_conflict_sweep_after_landing` / `feedback_dont_over_park_ready_prs_merge_promptly` / `feedback_outstanding_item_must_live_where_the_merge_gate_reads` | #2043 #2447 #3000 #2928 #3121 #2840 #3349 |
+| [issue は劣化する](docs/git-github/issue-lifecycle.ja.md) | `feedback_crosscheck_merged_prs_for_stale_done_issues` / `feedback_crosscheck_merged_prs_before_explaining_dispatching_arc` / `feedback_dispatch_brief_must_reflect_issue_comment_thread_not_just_body` / `feedback_issue_close_requires_condition_verification_record` / `feedback_track_deferred_work_before_close` / `feedback_arc_closure_remainder_must_be_filed_or_explicitly_dropped_in_the_closing_comment` / `feedback_open_issue_progress_continuous_update` / `feedback_open_ticket_count_is_maintenance_cost_prefer_do_over_file` / `feedback_investigate_before_filing_issue` / `feedback_over_cautious_issue_creation` / `feedback_unreproducible_bug_close` / `feedback_task_tracker_id_vs_github_issue_number` | #1406 #1206 #2940 #1115 #2597 #1010 |
+| [docs-only PR の罠](docs/git-github/docs-prs.ja.md) | `feedback_docs_only_pr_can_break_impl_doc_mirror_test` / `feedback_mermaid_render_check_on_doc_pr` / `feedback_docs_restructure_followup_completeness_gate` / `feedback_no_history_refs_in_user_docs` | #1566 #1568 #3039 #1256 #1257 #2046 |
+
+Tier2 第1弾(2026-07-30): 36 pin → 6 doc + 地図。**skills/ 第1弾**: [closing-keyword-check](skills/closing-keyword-check/skill.ja.md)(実行可能な checklist)。
 
 ## docs/orchestration/(Tier 3 — マルチエージェント運用)— 未着手
 
