@@ -31,10 +31,13 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 | [やり残しは欠陥の発見を遅らせる](docs/verification/incomplete-work.ja.md) | `feedback_incomplete_work_delays_defect_discovery` | #1505 #1317 |
 | [正常系の外を踏む](docs/verification/beyond-happy-path.ja.md) | `feedback_review_error_runtime_paths_not_just_happy_structural` / `feedback_live_verify_read_whole_frame_not_just_feature` | #2195 #2238 |
 | [復旧の源は破壊を生き残るか](docs/verification/recovery-truncation.ja.md) | `feedback_recovery_source_must_survive_truncation_review_gate` | #2259 #2260 |
+| [緑を読む技術](docs/verification/green-reading.ja.md) | `feedback_green_is_not_evidence_it_ran_skip_is_green` / `feedback_verify_identity_of_measured_code_before_reading_green_or_red` / `feedback_req_resp_plus_one_swallowed_exception` | #2994 #3019 #3031 #2980 #1413 |
+| [テストの偽物は本物の形に合わせる](docs/verification/test-doubles.ja.md) | `feedback_test_fake_inventing_a_field_makes_a_dead_gate_look_tested` / `feedback_envelope_detection_test_real_payload_shape` / `feedback_envelope_shape_fix_verify_fixture_matches_live_producer` / `feedback_enforcement_test_real_resolver_not_none` / `feedback_fake_backend_unit_misses_real_integration` / `feedback_roundtrip_test_nondefault_value` / `feedback_test_claim_must_match_test_content` | #3037 #1439 #1214 #1215 #1356 #1363 #1142 #1146 #1297 |
+| [削除の検証](docs/verification/removal-verification.ja.md) | `feedback_falsify_removal_dead_premise_all_producers` / `feedback_refalsify_own_evidence_readers_and_live_dead_names_before_removal` / `feedback_import_green_not_runtime_green_decouple_consumers` / `feedback_verify_delete_target_absent_not_just_keep_present` / `feedback_removal_docsync_kept_concept_ne_kept_symbol` | #2104 #2151 #2434 |
 
 fixture-provenance には `feedback_verify_failure_claims_by_observation_not_inference`(#1800 #2059 #2060)を追記統合。
 
-ソースの consolidator: `feedback_verification_blind_spot_family`(16 pin → 13 doc、2026-07-30)および `feedback_verification_discipline_family`(15 pin → 新規 7 doc + fixture-provenance 追記、2026-07-30)。いずれも memory-curator dir。
+ソースの consolidator: `feedback_verification_blind_spot_family`(16 pin → 13 doc、2026-07-30)および `feedback_verification_discipline_family`(15 pin → 新規 7 doc + fixture-provenance 追記、2026-07-30)。いずれも memory-curator dir。第3弾(2026-07-30)は family 化されていない単発 pin 15 件 → 3 doc(緑を読む技術 / テストの偽物 / 削除の検証)。
 
 ## docs/git-github/(Tier 2 — エージェント駆動 git/CI 運用)— 未着手
 
