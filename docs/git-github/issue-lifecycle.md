@@ -1,6 +1,6 @@
 ---
 name: issue-lifecycle
-description: Issues decay — the body is a snapshot from filing time, and resolution accumulates in the thread and in merged PRs. Covers pre-dispatch cross-checking, verification records at close, settling remainders ("next arc" is a third state), and filing calibration (in both directions)
+description: Issues decay — the body is a snapshot from filing time, and resolution accumulates in the thread and in merged PRs. Covers pre-dispatch cross-checking, verification records at close, settling remainders ("next arc" is a third state), and filing calibration in both directions, including the trap of a title that asserts an unconfirmed mechanism
 tags: [git-github, issues, process]
 sources:
   - feedback_crosscheck_merged_prs_for_stale_done_issues
@@ -15,6 +15,7 @@ sources:
   - feedback_over_cautious_issue_creation
   - feedback_unreproducible_bug_close
   - feedback_task_tracker_id_vs_github_issue_number
+  - feedback_the_issue_title_frames_the_answer_and_can_be_wrong
 ---
 
 # Issues Decay — Disciplines for Bodies, Threads, Closure, and Remainders
@@ -71,6 +72,12 @@ A **natural experiment** remains on one such issue: of two remainders closed on 
 
 **Under-verification (don't file on speculation)**: an issue is an external audit surface that every other session takes at face value. Before filing: did you **directly observe** the symptom (quote the log line, commit, job ID)? / do you have a reproduction command? / have you ruled out that it is **intended behavior**? / does the scope fit in a single issue? / can a first-time reader understand how to fix it and how to verify it?
 
+**The title is read as a premise — don't assert a mechanism you haven't confirmed.** When the filer's title already names a candidate mechanism ("read-before-write race," say), the assignee tends to search for an answer **inside that frame** — and if the frame itself is wrong, the best answer inside it is wrong too. Real case: an issue's body was correctly labeled INFERRED for its hypothesis, but **the title stayed assertive**. The assignee refused to search inside the frame and instead falsified the frame itself — every read-side code path turned out to be guarded against the very exception the title assumed, and the stack line cited as evidence for a "read path" turned out to be an unrelated re-raise. The real cause was a **write-after-delete**, on the write side (a second test instance wiped the first instance's live tree).
+
+- Keep the title at the level of **symptom, not mechanism**, until the mechanism is confirmed. Write "X happens," not "a race causes X."
+- If you cite a stack line as evidence for a mechanism, **actually open that line**. Citing a count or a line number without opening it is the same laziness as [The Discipline of Enumeration](../verification/enumeration-discipline.md) warns against.
+- An INFERRED label in the body does not protect the title — **the title is the surface everyone reads first and treats as a premise**. A label only holds its claim's status inside the body.
+
 **Over-retention (open tickets are maintenance cost)**: open tickets are a **real cost**, re-read and re-triaged at every inventory pass.
 
 - **Do over file**: a follow-up with no blocker and a settled resolution should be **finished now**, not ticketed. File only what genuinely must be deferred (waiting on a GO, on design, on external conditions) and deserves tracking. Never file "might want this someday."
@@ -93,11 +100,12 @@ Session-internal task-management IDs (#187 and the like) and GitHub issue/PR num
 - [ ] Remainders: settled as filed (#number) or explicitly dropped (reason)? Did you write "in the next arc" anywhere?
 - [ ] Did you reflect every landing onto the issue? Did you read the record before answering a status question?
 - [ ] Before filing: primary evidence, reproduction, intended behavior ruled out. Could you finish it now instead of filing? Does the escalation fall under one of the seven kinds?
+- [ ] Title: does it assert a mechanism that isn't confirmed yet? If you cited a stack line as evidence, did you actually open it?
 - [ ] Did you use #N only for GitHub?
 
 ## Sources (measured during reyn development)
 
-stale-done: #1406/#1407 and #1206/#1291. stale-premise: the arc-187 (internal label) capstone (unnecessary PR #1435 merged). Thread over body: #2940 (the body's hypothesis was already overturned and fixed; the implementer refused). Closure records: owner directive 2026-06-19 + retroactive backfill of 5 issues; content-cancel violation #1791. Remainders: #1115 (unfiled deferred → #1199/#1200 filed retroactively), #2597 (the natural experiment: the written vs. the unwritten remainder), and the verify-before-file that stopped a false-positive filing (2026-06-01). Progress reflection: #1375/#1397/#1401 (3 consecutive misses), the two wrong answers on the Control IR arc (owner re-emphasis 2026-07-04). Calibration: the owner's four-message run of 2026-07-10 (open-ticket pileup), #1010 ("soft"), the ghost-bug close directive (2026-05-28). ID collision: 2026-06-06.
+stale-done: #1406/#1407 and #1206/#1291. stale-premise: the arc-187 (internal label) capstone (unnecessary PR #1435 merged). Thread over body: #2940 (the body's hypothesis was already overturned and fixed; the implementer refused). Closure records: owner directive 2026-06-19 + retroactive backfill of 5 issues; content-cancel violation #1791. Remainders: #1115 (unfiled deferred → #1199/#1200 filed retroactively), #2597 (the natural experiment: the written vs. the unwritten remainder), and the verify-before-file that stopped a false-positive filing (2026-06-01). Progress reflection: #1375/#1397/#1401 (3 consecutive misses), the two wrong answers on the Control IR arc (owner re-emphasis 2026-07-04). Calibration: the owner's four-message run of 2026-07-10 (open-ticket pileup), #1010 ("soft"), the ghost-bug close directive (2026-05-28). Assertive titles: #3473 → PR #3519 (2026-07-30; an issue titled "read-before-write race" had a real cause of write-after-delete). ID collision: 2026-06-06.
 
 ## Related
 
