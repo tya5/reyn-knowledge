@@ -9,6 +9,7 @@ sources:
   - feedback_merge_order_signature_conflict_sweep_after_landing
   - feedback_dont_over_park_ready_prs_merge_promptly
   - feedback_outstanding_item_must_live_where_the_merge_gate_reads
+  - feedback_pending_ci_check_is_not_yet_a_pass
 ---
 
 # Confirm Merges by State — Hooks, Pollers, and Concurrent-PR Traps
@@ -25,6 +26,11 @@ In a setup where automation (a hook) watching command execution reacts to **the 
 
 - Don't send a conditional merge (pseudo-code: `if CI green → gh pr merge`) and a "merged ✅" report **in parallel within the same turn** (a turn = one agent response). Keep the order: run the merge → confirm state → report. If they absolutely must coincide, use **incomplete phrasing**: "will merge as soon as it's green (not yet done)."
 - Run other people's "everything is merged" reports through the same gate: confirm `state==MERGED` yourself before propagating hearsay (observed: a PR that had stayed open was mixed into an "all complete" report).
+
+**The near side of the same hole — do not count a pending CI check as passing.** The `pending` value returned by `gh pr view --json statusCheckRollup` only means "not finished yet," not "will pass." Measured: a report stated, as a **settled finding**, that "the only thing remaining is a pending pytest check, so it's not a review requirement" — written right after the same reporter had caught themselves misreading `pending` as absent, on an unrelated PR, earlier the same day.
+
+- Do not declare a `mergeStateStatus` (the field GitHub uses to judge merge readiness) that still contains pending checks as "effectively clean." **"Not yet failed" is not "confirmed to pass"** — this is the CI edition of the discipline that "not yet refuted" and "confirmed" are not the same claim (same family as [Argument Hygiene](../verification/argument-hygiene.md)).
+- When reporting, either **wait until the pending count reaches zero**, or, if you cannot wait, hedge explicitly: "N pending, not yet failed (unresolved)."
 
 ## 2. Under strict branch protection, merge failure becomes the normal state
 
@@ -75,6 +81,7 @@ The three rules — "don't read the verdict and merge in the same batch," "once 
 
 - [ ] Reported "merged" only after confirming `state==MERGED` plus non-null `mergedAt`?
 - [ ] Not treating a hook, a notification, or the fact of having run the command as evidence of a merge?
+- [ ] Not declaring a pending CI check "passing" or "not blocking"? Waited for pending=0, or hedged explicitly?
 - [ ] When the merge decision reversed, killed the poller before closing? Does the poller have an OPEN guard?
 - [ ] Turned a conditional CLEAR into machine-readable state (unchecked Test plan / draft) before arming the poller?
 - [ ] Immediately after landing a signature change, grepped main and ran the full suite?
@@ -82,7 +89,7 @@ The three rules — "don't read the verdict and merge in the same batch," "once 
 
 ## Sources (measured during reyn development)
 
-Hook false fires: #2043/#2051 (parallel ack while the conditional gate never fired) and #2447 (hook misfired three times on a draft PR). Strict-mode normality: #3165→#3167 after the #3000 configuration. Poller reopen+merge: #2928 (one minute after the owner's rejection). Leftover placement: #3349 (only the fix merged, the test left behind; includes the measurement that change requests are unusable in the same-user environment). Signature conflict: the #3121 arc (#3123 × #3122, found by a third party running the full suite). Over-parking: #2840 (conflicted with #2841 after four hours).
+Hook false fires: #2043/#2051 (parallel ack while the conditional gate never fired) and #2447 (hook misfired three times on a draft PR). Pending misread: #3494 (2026-07-30; right after catching a `pending` misread on an unrelated PR the same day, reported another PR's pending status as a settled "not a review requirement" finding). Strict-mode normality: #3165→#3167 after the #3000 configuration. Poller reopen+merge: #2928 (one minute after the owner's rejection). Leftover placement: #3349 (only the fix merged, the test left behind; includes the measurement that change requests are unusable in the same-user environment). Signature conflict: the #3121 arc (#3123 × #3122, found by a third party running the full suite). Over-parking: #2840 (conflicted with #2841 after four hours).
 
 ## Related
 
