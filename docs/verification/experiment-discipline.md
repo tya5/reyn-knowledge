@@ -1,10 +1,11 @@
 ---
 name: experiment-discipline
-description: The discipline of experiments and benchmarks — verifying the identity of A/B arms, never publishing a confounded number even with a caveat, the units your logs count vs. the units on the wire, the overfitting self-check before "it's fixed", measurement proves only positives, and diagnosing irreproducible environments by falsification
+description: The discipline of experiments and benchmarks — verifying the identity of A/B arms, "it really ran" does not mean the condition was reproduced, never publishing a confounded number even with a caveat, the units your logs count vs. the units on the wire, the overfitting self-check before "it's fixed", measurement proves only positives, and diagnosing irreproducible environments by falsification
 tags: [verification, measurement, benchmark, ab-testing]
 sources:
   - feedback_ab_arm_isolation_pythonpath_src_and_verify_import
   - feedback_dont_affirm_cross_arm_differential_from_single_point
+  - feedback_running_it_is_not_reproducing_the_condition
   - feedback_no_confounded_benchmark_number
   - feedback_your_count_and_the_wire_count_are_different_altitudes
   - overfit_self_check
@@ -28,14 +29,30 @@ Whether each arm of an A/B (arm = one of the two configurations being compared) 
 - **A single-point differential can only assert existence.** "Across the whole range, this differential is caused by that mechanism" is a separate claim; it requires measuring the range and a **search for orthogonal mechanisms** (is there another mechanism in the comparison arm producing the same result?). Measured: after a differential was asserted from a single point, it turned out that a different mechanism in the comparison arm had been producing the same result.
 - Honestly shrinking a claim (re-recording the asserted "the baseline arm stalls" as "it mostly recovers") is not a failure; it is correct behavior.
 
-## 2. A confounded number is not published — not even with a caveat
+## 2. "It really ran" does not mean the condition was reproduced
+
+"It actually ran" and "the run supports a conclusion" are different things. There is a real case of three measurements in a single day, each genuinely executed, that supported nothing:
+
+1. **The condition was never reproduced.** A flaky test documented as "occurs under load" was run sequentially, one test at a time, on a quiet machine, and passed 25/25 — nearly reported as "fixed." **Load, the condition, had not been created; it had merely been avoided.**
+2. **The harness broke, not the code.** Correcting for that, the same test was run six times concurrently: 17/18 failed. The failure was `FileExistsError: already exists` — **six copies fighting over one shared workspace**, not a defect in the thing under test. Reporting that number as-is would have contradicted a cause another engineer had independently isolated.
+3. **The unit was in dispute** (detailed in §4): "the residue is 2 cells" turned out to count occurrences of an escape code itself, including ones with no following text — the same hole as the units-and-altitude problem below.
+
+What finally settled this flake was the third attempt — **running different tests in parallel**, i.e. the actual shape CI takes. Only then did usable evidence appear, and it exposed **a third face** of failure (a missing model fixture entry, distinct from either of the two known causes).
+
+> **"It ran" feels cheap, so it gets treated as the evidence — but it is only the cheap part. What makes a run evidence is (a) that the condition under which the symptom occurs was actually created, and (b) that the failure you counted is the failure you think it is.**
+
+- Before reporting a rate, say out loud **what condition the symptom requires** (load? parallelism? a cold cache? a specific terminal?) and whether the run actually had it. "Sequential and quiet" is not "under load."
+- Before it becomes a number, **open the failure and read it**. A green-vs-red count says nothing about whether the red is the one you think it is.
+- Parallel execution of a parallelism-sensitive test must come from **different tests** sharing a machine. N copies of the same test fighting over shared fixtures measures a harness defect, not parallelism.
+
+## 3. A confounded number is not published — not even with a caveat
 
 A number whose measurement conditions turn out to have been broken (the system under test was handicapped) is **not published even with** a "reference value" or "lower bound" **annotation**. Numbers drop their annotations and walk off on their own, and later sessions and documents will quote the bare figure. Measured: the scoring harness was correct, but the system under test had been running in an environment where its own self-checks were broken — just before the number came out, it was classified as confounded, and the decision taken was to **checkpoint (record the state and the judgment so far, and stop for now) and re-measure faithfully in the next measurement slot**.
 
 - The question before emitting: "**Is every input to this number faithful?**" (Do the measurement conditions measure the claimed capability, or the handicap of a broken condition?)
 - Derived rule: a measurement whose **verification loop touches the answer key** (iterating against the test leaks the answer) **cannot be published** as an external score — it retains value as an internal stability signal (use it strictly for that purpose, and do not call it an official score).
 
-## 3. The units your logs count and the units on the wire are at different altitudes
+## 4. The units your logs count and the units on the wire are at different altitudes
 
 Measured (all on localhost, at zero billing cost): a single embedding call sent **nine** HTTP requests. The log said "attempt 1/3." The culprit was not the suspected layer:
 
@@ -53,7 +70,7 @@ The caller intends "no retries specified (None)"
 - **Timeouts carry the same altitude gap**: an SDK's `timeout=` is the deadline **per retried request**, not the overall deadline — `timeout: 60` silently becomes 180 seconds. The risk is not "the library ignores your setting" but "**it honors it at a different altitude than the reader assumed**."
 - A bonus measurement: an implementation that records cost only **after** the await records zero on exceptions and, even on success, only 1 of the 9 requests — a **structurally lower-bound** accounting. The owner's one-liner ("wait, have retries been inflating our costs this whole time?") was the starting point of the discovery; the author had merely written the branch and had **never measured it**.
 
-## 4. The overfitting self-check before saying "it's fixed"
+## 5. The overfitting self-check before saying "it's fixed"
 
 Immediately before reporting a fix as "verified," ask yourself the following (every item was actually stepped on in practice):
 
@@ -64,16 +81,16 @@ Immediately before reporting a fix as "verified," ask yourself the following (ev
 5. **Did you decompose the ambiguous input?** If behavior that looked like "the wrong choice" is reasonable as a different interpretation of an ambiguous request, it is not a defect — "it was not a defect" is also a legitimate conclusion.
 6. **If the fix originated from a benchmark**: first test whether the target is already reachable through the general path. **If reachable**, no priority placement or prompt micro-tuning is needed — adding it anyway is a **soft cheat** (tuning that eases only that benchmark); in the measured case exactly such an addition was sent back by the owner. **If unreachable or awkward to use**, the thing to fix is the general path itself (a form that helps every user), not a benchmark-specific shortcut.
 
-## 5. Measurement proves only positives — do not use it as grounds for rejection
+## 6. Measurement proves only positives — do not use it as grounds for rejection
 
 The owner's challenge (2026-06-19): "Judging an improvement proposal by measurement is wrong. **In a limited environment, how do you prove that it cannot improve things in other environments?**"
 
 - What measurement can prove is only the **positive** (it worked in this environment). Generalizing a negative from a limited environment into "it works nowhere" is logically invalid.
 - Accept or reject improvement proposals (guidelines, prompt improvements, and the like) as a **design judgment**: is it sound, low-cost, harmless, and plausibly beneficial in other environments? "I could not measure an effect in my environment = reject" is wrong.
 - Exception: **structural redundancy** (the system already does the same thing structurally) is an environment-independent fact, and a legitimate ground for rejection without measurement.
-- Relation to §4: §4 states the evidence requirements for whoever claims the positive ("it's fixed"); this section is its flip side — since measurement proves only positives, rejection on a negative ("it doesn't help") is the job of design judgment, not measurement. Even if N≥5 shows no improvement, that only means "we cannot say it's fixed"; adoption returns to design judgment. (5 is not a magic number — an operational floor for telling a one-off fluke from a trend in a probabilistic system.)
+- Relation to §5: §5 states the evidence requirements for whoever claims the positive ("it's fixed"); this section is its flip side — since measurement proves only positives, rejection on a negative ("it doesn't help") is the job of design judgment, not measurement. Even if N≥5 shows no improvement, that only means "we cannot say it's fixed"; adoption returns to design judgment. (5 is not a magic number — an operational floor for telling a one-off fluke from a trend in a probabilistic system.)
 
-## 6. Performance problems in an environment you cannot reproduce are diagnosed by falsification, not confirmation
+## 7. Performance problems in an environment you cannot reproduce are diagnosed by falsification, not confirmation
 
 For a performance degradation or freeze that does not reproduce in your own environment (it occurs only on the other party's machine), do not ship a fix derived from static analysis (reading the code without executing it) and call it "fixed." Measured: a fix that was a genuine improvement by static analysis had **zero effect** on the other party's freeze (the true cause was on a different path). What prevented the next two wrong fixes was a chain of falsifications:
 
@@ -87,6 +104,7 @@ The order of fixes is also disciplined: relieve the acute symptom first with the
 ## Checklist
 
 - [ ] A/B: did you print and confirm each arm's actual import path? Are you promoting a single-point differential to "causality across the whole range"? Did you search for orthogonal mechanisms?
+- [ ] Before reporting a rate: did you actually satisfy the condition the symptom requires (load, parallelism, cold cache, etc.)? Did you open the failure and read its content?
 - [ ] Before emitting a number: is every input faithful? If there is a confound, did you checkpoint + re-measure (rather than annotate)?
 - [ ] Are you treating a measurement whose verification loop touches the answer key as a public score?
 - [ ] Before writing "N times": did you count on the wire? Any `x or DEFAULT`? Did you name the unit your log counts?
@@ -96,7 +114,7 @@ The order of fixes is also disciplined: relieve the acute symptom first with the
 
 ## Sources (measured during reyn development)
 
-A/B arms: #2187 (an editable install silently shadowed the environment variable and contaminated an arm / a differential asserted from a single point → an orthogonal mechanism was found). Confounded numbers: FP-0008 C7 (2026-05-30, a score from an environment with broken self-checks was classified as confounded just before publication; checkpointed). Altitude of units: #3047 (2026-07-17, 1 embed = 9 HTTP requests, sparked by the owner's one-liner; cost recording is a structural lower bound) + #3045 (the timeout altitude gap; the author falsified their own docstring). Overfitting: 2026-05-17 scenario D (an N=1 "verified" with a sentence identical to the guidance text → the true cause was the simultaneous cache deletion; the same author had previously verified with 430 calls × 10 hypotheses with rejection criteria). Soft cheat: arc-187 (an internal campaign label, not an issue number; an addition to priority placement was sent back by the owner — it was reachable via the general path; the episode is recorded in #1416). Positives only: 2026-06-19 owner directive. Internal signal: 2026-05-31 (scores whose verification loop leaks the answer are not published; the internal value is retained). Falsification diagnosis: #2937 (a genuine improvement with zero effect) → #2938 (true cause: an O(N×M) re-scan per message) → #2939 (delicate optimization split into a follow-up).
+A/B arms: #2187 (an editable install silently shadowed the environment variable and contaminated an arm / a differential asserted from a single point → an orthogonal mechanism was found). Reproducing the condition: three in one day (a flake passed 25/25 without reproducing load; a harness broken by six concurrent copies produced 17/18 failures; a unit in dispute; the third attempt, running different tests in parallel, finally produced usable evidence and a third failure face). Confounded numbers: FP-0008 C7 (2026-05-30, a score from an environment with broken self-checks was classified as confounded just before publication; checkpointed). Altitude of units: #3047 (2026-07-17, 1 embed = 9 HTTP requests, sparked by the owner's one-liner; cost recording is a structural lower bound) + #3045 (the timeout altitude gap; the author falsified their own docstring). Overfitting: 2026-05-17 scenario D (an N=1 "verified" with a sentence identical to the guidance text → the true cause was the simultaneous cache deletion; the same author had previously verified with 430 calls × 10 hypotheses with rejection criteria). Soft cheat: arc-187 (an internal campaign label, not an issue number; an addition to priority placement was sent back by the owner — it was reachable via the general path; the episode is recorded in #1416). Positives only: 2026-06-19 owner directive. Internal signal: 2026-05-31 (scores whose verification loop leaks the answer are not published; the internal value is retained). Falsification diagnosis: #2937 (a genuine improvement with zero effect) → #2938 (true cause: an O(N×M) re-scan per message) → #2939 (delicate optimization split into a follow-up).
 
 ## Related
 
