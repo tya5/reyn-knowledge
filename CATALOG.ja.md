@@ -7,7 +7,8 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 
 ## docs/verification/(Tier 1 — AI 生成物の検証パターン)
 
-体系マップ: [検証ナレッジの体系](docs/verification/index.ja.md)(13 doc のパイプライン配置と横断4原理。ソース pin なしのメタ文書)
+体系マップ: [検証ナレッジの体系](docs/verification/index.ja.md)(全 doc のパイプライン配置と横断4原理。ソース pin なしのメタ文書)
+役割マップ: [coder / tester / reviewer 分離運用の実務](docs/verification/roles.ja.md)(全体系の役割軸への射影 + verdict フローの pin 4件を統合)
 
 | ドキュメント | ソース pin | 主な出典 issue |
 |---|---|---|
@@ -34,6 +35,7 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 | [緑を読む技術](docs/verification/green-reading.ja.md) | `feedback_green_is_not_evidence_it_ran_skip_is_green` / `feedback_verify_identity_of_measured_code_before_reading_green_or_red` / `feedback_req_resp_plus_one_swallowed_exception` | #2994 #3019 #3031 #2980 #1413 |
 | [テストの偽物は本物の形に合わせる](docs/verification/test-doubles.ja.md) | `feedback_test_fake_inventing_a_field_makes_a_dead_gate_look_tested` / `feedback_envelope_detection_test_real_payload_shape` / `feedback_envelope_shape_fix_verify_fixture_matches_live_producer` / `feedback_enforcement_test_real_resolver_not_none` / `feedback_fake_backend_unit_misses_real_integration` / `feedback_roundtrip_test_nondefault_value` / `feedback_test_claim_must_match_test_content` | #3037 #1439 #1214 #1215 #1356 #1363 #1142 #1146 #1297 |
 | [削除の検証](docs/verification/removal-verification.ja.md) | `feedback_falsify_removal_dead_premise_all_producers` / `feedback_refalsify_own_evidence_readers_and_live_dead_names_before_removal` / `feedback_import_green_not_runtime_green_decouple_consumers` / `feedback_verify_delete_target_absent_not_just_keep_present` / `feedback_removal_docsync_kept_concept_ne_kept_symbol` | #2104 #2151 #2434 |
+| [役割分離運用の実務](docs/verification/roles.ja.md) | `feedback_reviewer_speculation_arrives_as_instruction_and_outranks_measurement` / `feedback_gate_merge_on_covet_verdict_not_batch_read_and_merge` / `feedback_wait_for_updated_verdict_before_merge_after_raising_finding` / `feedback_covet_note_gates_author_final` | #3437 #3471 #2774 #2826 #1603 |
 
 fixture-provenance には `feedback_verify_failure_claims_by_observation_not_inference`(#1800 #2059 #2060)を追記統合。
 

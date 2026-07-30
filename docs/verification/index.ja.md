@@ -101,6 +101,8 @@ flowchart TD
 
 ## 立場別の読む順
 
+coder / tester / reviewer を別エージェントに分ける運用(現在の AI コーディングの標準構成)では、[役割分離運用の実務](roles.ja.md)が本体系を役割ごとの義務 — coder の報告契約・tester の反証メニュー・reviewer の独立検証と指示の非対称・マージゲートの3規則 — に組み直している。そちらを入口にしてよい。
+
 - **実装する側(エージェント本人、または実装を依頼する人)**: [strip 反証](strip-falsification.ja.md) → [配線テスト](wiring-vs-mechanism.ja.md) → [修正は生きた経路で](fix-verification-live-path.ja.md) → [fixture の出自](fixture-provenance.ja.md) → [やり残し](incomplete-work.ja.md)。自分の報告を証拠付きにする技術。
 - **レビュー・co-vet(独立第二検証)する側**: [一括修正 PR](sweep-reviews.ja.md) → [fix-class レビュー](fix-class-review.ja.md) → [正常系の外](beyond-happy-path.ja.md) → [共有ヘルパー](shared-helper-widening.ja.md) → [監査は内容を照合する](audit-content-match.ja.md) → [strip 計測器](strip-instrument-integrity.ja.md)。diff と報告の外側を見る技術。
 - **検証系・CI を設計する側**: [検証環境の盲目](environment-blindness.ja.md) → [census と structure](census-vs-structure.ja.md) → [生死は producer](liveness-is-producer.ja.md) → [復旧と切り詰め](recovery-truncation.ja.md) → [列挙の規律](enumeration-discipline.ja.md)。ゲートを置く場所と形を決める技術。

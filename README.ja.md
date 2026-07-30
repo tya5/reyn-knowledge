@@ -25,7 +25,7 @@ skills/             # 実行可能な checklist / Claude Code skill(予定)
 CATALOG.md          # 全ドキュメント索引 + 出典対応表
 ```
 
-入口は[検証ナレッジの体系マップ](docs/verification/index.ja.md) — 23本のドキュメントが「完了報告をマージするまでに何をどの順で疑うか」のパイプラインとしてどう配置されるか、および横断する4原理をまとめてある。個別に読むなら [strip 反証の規律](docs/verification/strip-falsification.ja.md) と [検証環境の構造的盲目](docs/verification/environment-blindness.ja.md) が代表格。
+入口は[検証ナレッジの体系マップ](docs/verification/index.ja.md) — 23本のドキュメントが「完了報告をマージするまでに何をどの順で疑うか」のパイプラインとしてどう配置されるか、および横断する4原理をまとめてある。coder / tester / reviewer を別エージェントに分ける標準的な運用に向けては、[役割分離運用の実務](docs/verification/roles.ja.md)が全体系を役割ごとの義務(coder の報告契約・tester の反証メニュー・reviewer の独立検証・マージゲート)に組み直している。個別に読むなら [strip 反証の規律](docs/verification/strip-falsification.ja.md) と [検証環境の構造的盲目](docs/verification/environment-blindness.ja.md) が代表格。
 
 ## 言語
 
