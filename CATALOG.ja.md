@@ -38,10 +38,12 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 | [役割分離運用の実務](docs/verification/roles.ja.md) | `feedback_reviewer_speculation_arrives_as_instruction_and_outranks_measurement` / `feedback_gate_merge_on_covet_verdict_not_batch_read_and_merge` / `feedback_wait_for_updated_verdict_before_merge_after_raising_finding` / `feedback_covet_note_gates_author_final` | #3437 #3471 #2774 #2826 #1603 |
 | [完全性掃討の実務](docs/verification/completeness-sweeps.ja.md) | `feedback_fix_class_completeness_sweep` / `feedback_fix_one_of_n_parallel_paths_sweep_all_siblings` / `feedback_completeness_for_gate_routing_fixes` / `feedback_completeness_sweep_semantic_not_single_mechanism_grep` / `feedback_invariant_coverage_exhaustive_enumeration` / `feedback_registry_enumeration_covers_the_tool_axis_not_the_seam_axis` / `feedback_clean_break_completeness_full_repo_grep_not_src_tests` / `feedback_package_move_completeness_three_ref_classes` / `feedback_git_grep_underreports_use_plain_grep_for_audit` / `feedback_lsp_cold_start_findreferences_silent_underreport` | #1925 #2394 #2397 #1387 #1389 #1954 #1533 #3383 #3376 #2850 #2848 #1700 #1706 #1724 #1953 |
 | [論拠の衛生](docs/verification/argument-hygiene.ja.md) | `feedback_cannot_claims_require_tracing_the_mechanism` / `feedback_absence_in_code_cannot_tell_forgotten_from_decided` / `feedback_extrapolation_dies_on_use_not_on_review` / `feedback_a_conceded_argument_can_return_under_a_new_name` / `feedback_form_gives_the_instance_only_the_reason_gives_the_class` / `feedback_not_urgent_and_not_decided_are_different_axes` | #3010 #3011 #3036 #3340 #3334 #3024 #3082 #3411 #3447 |
+| [モデルのせいにする前に](docs/verification/capability-attribution.ja.md) | `feedback_all_failures_structural_verify_obligation` / `feedback_context_adequacy_before_model_axis_attribution` / `feedback_context_adequacy_three_legs` / `feedback_cosign_verify_exonerating_evidence_provenance` / `feedback_multi_layer_structural_decomposition` / `feedback_upper_bound_diagnostic_capability_vs_structural` / `feedback_req0_model_verification_before_capability_verdict` / `feedback_weak_model_run_value_is_structural_defect_mining` / `feedback_no_weak_model_overfitting` / `feedback_weak_tier_subtract_or_declare_not_add_signals` | #1133 #183 #187 #1092 |
+| [実験とベンチマークの規律](docs/verification/experiment-discipline.ja.md) | `feedback_ab_arm_isolation_pythonpath_src_and_verify_import` / `feedback_dont_affirm_cross_arm_differential_from_single_point` / `feedback_no_confounded_benchmark_number` / `feedback_your_count_and_the_wire_count_are_different_altitudes` / `overfit_self_check` / `feedback_benchmark_catalog_tuning_is_soft_cheat` / `feedback_measure_negative_cannot_prove_from_limited_env` / `feedback_swe_passrate_internal_signal_not_published` / `feedback_owner_perf_freeze_falsify_before_refix_playbook` | #2187 #3047 #3045 #187 #2937 #2938 #2939 |
 
 fixture-provenance には `feedback_verify_failure_claims_by_observation_not_inference`(#1800 #2059 #2060)を追記統合。
 
-ソースの consolidator: `feedback_verification_blind_spot_family`(16 pin → 13 doc、2026-07-30)および `feedback_verification_discipline_family`(15 pin → 新規 7 doc + fixture-provenance 追記、2026-07-30)。いずれも memory-curator dir(pin を整理する担当セッションのディレクトリ)。第3弾(2026-07-30)は family 化されていない単発 pin 15 件 → 3 doc(緑を読む技術 / テストの偽物 / 削除の検証)。第4弾(2026-07-30)は 16 pin → 2 doc(完全性掃討の実務 / 論拠の衛生)。**これで Tier1 のコア(計 66 pin → 25 doc + 体系マップ + 役割マップ)は完了**(表中の roles は役割マップとして別掲)。
+ソースの consolidator: `feedback_verification_blind_spot_family`(16 pin → 13 doc、2026-07-30)および `feedback_verification_discipline_family`(15 pin → 新規 7 doc + fixture-provenance 追記、2026-07-30)。いずれも memory-curator dir(pin を整理する担当セッションのディレクトリ)。第3弾(2026-07-30)は family 化されていない単発 pin 15 件 → 3 doc(緑を読む技術 / テストの偽物 / 削除の検証)。第4弾(2026-07-30)は 16 pin → 2 doc(完全性掃討の実務 / 論拠の衛生)。**これで Tier1 のコア(計 66 pin → 25 doc + 体系マップ + 役割マップ)は完了**(表中の roles は役割マップとして別掲)。第5弾(2026-07-30、全 pin 再トリアージ後): 19 pin → 2 doc(モデルのせいにする前に / 実験とベンチマークの規律)で計 27 doc。
 
 ## docs/git-github/(Tier 2 — エージェント駆動 git/CI 運用)
 
@@ -79,6 +81,15 @@ Tier3 第1弾(2026-07-30): 30 pin → 5 doc + 地図。ソースは lead-coder /
 | [closing-keyword-check](skills/closing-keyword-check/skill.ja.md) | PR の issue 自動クローズを事故らせない5 Step | closing-keywords |
 | [merge-gate-check](skills/merge-gate-check/skill.ja.md) | merged の state 確認・自動化の停止・残件の置き場・合成検査・ローカル同期の5 Step | merge-gates / stale-local / worktree-parallel |
 | [stall-triage](skills/stall-triage/skill.ja.md) | 「止まって見える」を安い順に切り分ける6 Step(自分の送信文→機械申告→3点測定→帰属→倍率照合→verified fact) | stall-detection |
+
+## 残 pin の再トリアージ(2026-07-30、全309 pin 棚卸し)
+
+消化済み 155 pin(Tier1 85 + Tier2 36 + Tier3 30 + 本表の追加分)。未消化 189 の内訳:
+
+- **次バッチ候補(未執筆の新クラスタ)**: ①構造的修正の哲学(絆創膏禁止・真因まで遡る・エージェント規模開発では移行コストが安く clean end-state を選べる、~7 pin)②設計判断の衛生(選択肢の捏造禁止・原 intent の保存・オーナーのメンタルモデル確認、~9 pin)③構成的に安全な設計パターン(有界性を構成で保証・finally での後始末・雑音下でも安全な照合、~12 pin)④リード役の運用モデル(リードは実装しない・裁定前の一次証拠・モデル階層の使い分け、~10 pin)⑤セキュリティゲート(権限昇格は反証まで BLOCK、~4 pin)
+- **既存 doc への追記候補**: 既存テーマの別セッション写し・family まとめ pin など多数(citation pass と同時に随時)
+- **Tier4(持ち出さない)**: 38 pin — reyn 内部機構・特定モジュール・ローカル規約
+- **対象外**: 11 pin — reference/進捗/個人設定
 
 ## 出典の記法について
 
