@@ -1,6 +1,6 @@
 ---
 name: verification-index
-description: The map of this knowledge area — what to doubt, in what order, between an agent's "done, all green" report and the merge. Where the 25 docs sit, and the 4 principles that cut across them
+description: The map of this knowledge area — what to doubt, in what order, between an agent's "done, all green" report and the merge. Where the 27 docs sit, and the 4 principles that cut across them
 tags: [verification, index, overview]
 ---
 
@@ -10,11 +10,11 @@ tags: [verification, index, overview]
 
 In development performed by AI coding agents, **the same party that implements a change also verifies it and writes the report**. The roles that a human team implicitly separates — builder, verifier, reader of the report — collapse into one context. And the reports are invariably fluent and confident: **confidence does not correlate with correctness**, so verifying the report becomes an engineering step of its own.
 
-Three more conditions stack on top: generation speed exceeds human review speed; the implementer writes its own tests (its own grading criteria); and multiple agents work concurrently in the same repository and shared environment. Together these four conditions turn a failure mode that is rare in human teams — **the industrial-scale production of self-overtrust** — into a daily occurrence. The 25 documents in this directory are a system of countermeasures extracted from field records of exactly those failures.
+Three more conditions stack on top: generation speed exceeds human review speed; the implementer writes its own tests (its own grading criteria); and multiple agents work concurrently in the same repository and shared environment. Together these four conditions turn a failure mode that is rare in human teams — **the industrial-scale production of self-overtrust** — into a daily occurrence. The 27 documents in this directory are a system of countermeasures extracted from field records of exactly those failures.
 
 ## The pipeline — from completion report to merge
 
-The 25 docs form a single pipeline of "what to doubt, in what order." The further upstream a breakage occurs, the more it invalidates every verification downstream of it.
+The 27 docs form a single pipeline of "what to doubt, in what order." The further upstream a breakage occurs, the more it invalidates every verification downstream of it.
 
 ```mermaid
 flowchart TD
@@ -33,6 +33,7 @@ The furthest upstream. If this is off, every green and red downstream is a claim
 - [Measuring the wrong target](measurement-target.md) — "measured, but the target was off" is more dangerous than "didn't measure." Before measuring: does this measurement cover what the decision needs?
 - [Integrity of the strip instrument](strip-instrument-integrity.md) — non-unique anchors, duplicated declarations, measuring another tree, load. A broken instrument yields no conclusions
 - [Liveness of the verification run](verification-run-liveness.md) — "slow" and "stuck" are different states; never report progress on a run you are not reading
+- [The Discipline of Experiments and Benchmarks](experiment-discipline.md) — A/B arm identity; never emit a confounded number; your log's unit vs the unit on the wire; the overfit self-check; measurement proves only positives
 
 ### Stage 1 — Content of the claim: what does that green witness?
 
@@ -76,6 +77,7 @@ How to treat claims, declarations, and descriptions derived from reading code ra
 
 - [Proving fixture provenance](fixture-provenance.md) — verify "I re-recorded it" by dependence, not by the claim; "pre-existing failure" is settled only by observation
 - [Claims without context](cross-context-claims.md) — advice, delegated audits, and completion reports must label the context they lack, or gate on its holder's approval
+- [Before Blaming the Model](capability-attribution.md) — "model capability" is a terminal classification that ends investigation. The four-layer check, provenance of exonerating evidence, stacked defects, weak models as probes, the ban on overfitting
 
 ## The four cross-cutting principles
 
