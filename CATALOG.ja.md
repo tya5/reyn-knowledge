@@ -18,7 +18,7 @@ reyn 側の pin は今後も増え続けるため、この表が定期同期の�
 | [空虚なゲートの生まれ方](docs/verification/vacuous-gates.ja.md) | `feedback_gate_vacuity_hides_in_terminal_state_only_assertions` / `feedback_containment_gate_must_cover_both_axes_and_children` | #3288 #3299 #3358 #3363 #3370 #3311 #3337 #3341 |
 | [検証環境の構造的盲目](docs/verification/environment-blindness.ja.md) | `feedback_verification_environment_structurally_blind` | #2975 #2962 #2965 #2952 #2973 #2982 #2978 #2981 |
 | [census と structure](docs/verification/census-vs-structure.ja.md) | `feedback_census_vs_structure_definition_and_checked_premises` / `feedback_perf_fix_needs_fixclass_question_not_correctness_frame`(census 部分) | #2945 #2949 #2962 #2963 #2961 #2960 #2958 |
-| [列挙の規律](docs/verification/enumeration-discipline.ja.md) | `feedback_census_vs_structure_definition_and_checked_premises`(§4)/ `feedback_measured_but_the_target_was_off_my_four_instances`(面の定義部分)/ `feedback_perf_fix_needs_fixclass_question_not_correctness_frame`(grep 権威部分) | #2958 #2965 #2981 #2951 #3429 #3463 |
+| [列挙の規律](docs/verification/enumeration-discipline.ja.md) | `feedback_census_vs_structure_definition_and_checked_premises`(§4)/ `feedback_measured_but_the_target_was_off_my_four_instances`(面の定義部分) | #2958 #2965 #2981 #2951 #3429 #3463 |
 | [fix-class レビュー](docs/verification/fix-class-review.ja.md) | `feedback_perf_fix_needs_fixclass_question_not_correctness_frame` | #2937 #2938 #2948 #2945 |
 | [生死は producer で判定する](docs/verification/liveness-is-producer.ja.md) | `feedback_liveness_is_producer_not_reader` | 2026-07-04 skill 掃討, #3357 #3410 #3432 #3433 #3437 |
 | [測定対象のずれ](docs/verification/measurement-target.ja.md) | `feedback_measured_but_the_target_was_off_my_four_instances` | #3437 #3433 #3411 #3458 #3459 #3461 #3429 #3463 |

@@ -5,7 +5,6 @@ tags: [verification, completeness, tooling]
 sources:
   - feedback_census_vs_structure_definition_and_checked_premises
   - feedback_measured_but_the_target_was_off_my_four_instances
-  - feedback_perf_fix_needs_fixclass_question_not_correctness_frame
 ---
 
 # 列挙の規律 — 「全部見た」はどうやって嘘になるか
