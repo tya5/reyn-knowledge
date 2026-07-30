@@ -58,13 +58,23 @@ Map: [The map of git/GitHub hazards](docs/git-github/index.md) (structure of the
 
 Tier 2 batch 1 (2026-07-30): 36 pins → 6 docs + map. **First skill**: [closing-keyword-check](skills/closing-keyword-check/skill.md) (executable checklist).
 
-## docs/orchestration/ (Tier 3 — multi-agent fleet operations) — not started
+## docs/orchestration/ (Tier 3 — multi-agent fleet operations)
 
-Candidate pins (~14): `background_pytest_poll_stall` / `review_menu_before_standby` / `peer_silent_stall_detection` / `shared_venv_worktree_identity` (partly covered under Tier 1), among others.
+Map: [The Map of Multi-Agent Operation Hazards](docs/orchestration/index.md) (the structure of the 5 docs; meta document)
 
-## skills/ — not started
+| Document | Source pins | Main source issues |
+|---|---|---|
+| [Detecting Stalled Agents](docs/orchestration/stall-detection.md) | `feedback_coder_background_pytest_poll_stall_pattern` / `feedback_running_task_overrun_known_duration_is_hung_not_slow` / `feedback_sonnet_peer_stalls_at_compaction` / `feedback_peer_silent_local_work_invisible_to_watchers` / `feedback_repeated_status_text_requires_active_flag_check` / `feedback_stall_idle_session_declared_not_broker_inferred` / `feedback_verify_peer_progress_not_assume_dispatch` | #3083 #3086 #3090 #3091 #3093 #2259 #1495 #2840 #2846 #2296 |
+| [Verifying Before You Relay](docs/orchestration/relay-verification.md) | `feedback_probe_infra_state_before_propagating_peer_claim` / `feedback_peer_broker_articulate_verify_obligation` / `feedback_broker_numbers_file_copy_only` / `feedback_confound_exclusion_before_propagating_peer_finding` | #187 |
+| [The Discipline of Dispatch Briefs](docs/orchestration/dispatch-briefs.md) | `feedback_mirror_brief_must_name_the_invariant` / `feedback_dispatch_brief_must_require_doc_for_userfacing` / `feedback_sub_agent_dispatch_assertion_shape_verify` / `feedback_sub_agent_primary_evidence_cross_reference` / `feedback_go_decision_not_recommendation_for_planfirst_peer` | #2620 #3045 #2296 |
+| [The Discipline of Autonomous Operation](docs/orchestration/autonomous-operation.md) | `feedback_no_blocking_askuser_in_autonomous_mode` / `feedback_no_fatigue_reflex_defer` / `feedback_no_fatigue_defer_harness_autocontinues` / `feedback_review_menu_before_standby` / `feedback_empty_settled_bucket_standby` / `feedback_milestone_goal_recheck_against_ticket` / `feedback_parallel_work_after_dispatch` | #2259 #1599 #2264 |
+| [Communication Channels and the Cost of Waiting](docs/orchestration/channels-and-cost.md) | `feedback_inter_session_communication_paths` / `feedback_canonical_contract_in_issue_not_broker` / `feedback_polling_vs_llm_cost_tradeoff` / `feedback_long_running_commands_background_not_foreground` / `feedback_no_sync_launch_long_work_blocks_conversation` / `feedback_broker_post_articulate_action_gap` / `feedback_no_idle_loops_only_session_watcher` | #1135 #993 #995 #998 |
 
-The most operational items become checklists / skills first (Tier 2's closing-keyword and merge-gate families are the leading candidates).
+Tier 3 batch 1 (2026-07-30): 30 pins → 5 docs + map. Sources span the memory dirs of lead-coder, memory-curator, and several other sessions.
+
+## skills/ — more to come
+
+The first skill is [closing-keyword-check](skills/closing-keyword-check/skill.md) (Tier 2). Next candidates: the merge-gate family and the three-point stall measurement.
 
 ## Notes on provenance
 

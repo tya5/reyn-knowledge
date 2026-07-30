@@ -102,7 +102,7 @@ plan-first(承認が出るまで実装に入らない方針)で動く相手が�
 
 ## 関連
 
-- [役割分離運用の実務](../verification/roles.ja.md) — 依頼側の義務の全体像
+- [役割分離運用の実務](../verification/roles.ja.md) — 役割ごとの義務の全体像(本書はその依頼側の各論)
 - [監査は内容を照合する](../verification/audit-content-match.ja.md) — ラベルと中身の乖離の一般形
 - [止まっているエージェントの見つけ方](stall-detection.ja.md) — soft な GO が作る偽の停止
 - [完全性掃討の実務](../verification/completeness-sweeps.ja.md) — ドキュメント抜け漏れの全数点検
