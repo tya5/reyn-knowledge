@@ -25,7 +25,7 @@ skills/             # executable checklists / Claude Code skills (planned)
 CATALOG.md          # index of all documents + source mapping
 ```
 
-Start with [the map of the verification knowledge](docs/verification/index.md) — it lays out how the 23 documents form a pipeline of "what to doubt, in what order, between a completion report and the merge," plus the four principles that cut across all of them. For the now-standard setup with separate coder / tester / reviewer agents, [the roles guide](docs/verification/roles.md) reprojects the whole system into per-role obligations (the coder's report contract, the tester's falsification menu, the reviewer's independent verification, the merge gates). For standalone reading, [The discipline of strip-falsification](docs/verification/strip-falsification.md) and [Structural blindness of the verification environment](docs/verification/environment-blindness.md) are representative.
+Start with [the map of the verification knowledge](docs/verification/index.md) — it lays out how the 25 documents form a pipeline of "what to doubt, in what order, between a completion report and the merge," plus the four principles that cut across all of them. For the now-standard setup with separate coder / tester / reviewer agents, [the roles guide](docs/verification/roles.md) reprojects the whole system into per-role obligations (the coder's report contract, the tester's falsification menu, the reviewer's independent verification, the merge gates). For standalone reading, [The discipline of strip-falsification](docs/verification/strip-falsification.md) and [Structural blindness of the verification environment](docs/verification/environment-blindness.md) are representative.
 
 ## Languages
 

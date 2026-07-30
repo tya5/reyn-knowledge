@@ -1,6 +1,6 @@
 ---
 name: argument-hygiene
-description: 結論の手前で掛ける5つの検査 — 「できない」は症状から言えない、「無い」は忘れたか決めたか区別できない、外挿はレビューでは死なない、譲った論拠は名前を変えて戻る、理由だけがクラスを与える、「急がない」と「決めていない」は別の軸
+description: 結論の手前で掛ける6つの検査 — 「できない」は症状から言えない、「無い」は忘れたか決めたか区別できない、外挿はレビューでは死なない、譲った論拠は名前を変えて戻る、理由だけがクラスを与える、「急がない」と「決めていない」は別の軸
 tags: [verification, reasoning, review]
 sources:
   - feedback_cannot_claims_require_tracing_the_mechanism

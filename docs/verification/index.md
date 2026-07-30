@@ -1,6 +1,6 @@
 ---
 name: verification-index
-description: The map of this knowledge area — what to doubt, in what order, between an agent's "done, all green" report and the merge. Where the 23 docs sit, and the 4 principles that cut across them
+description: The map of this knowledge area — what to doubt, in what order, between an agent's "done, all green" report and the merge. Where the 25 docs sit, and the 4 principles that cut across them
 tags: [verification, index, overview]
 ---
 
@@ -10,11 +10,11 @@ tags: [verification, index, overview]
 
 In development performed by AI coding agents, **the same party that implements a change also verifies it and writes the report**. The roles that a human team implicitly separates — builder, verifier, reader of the report — collapse into one context. And the reports are invariably fluent and confident: **confidence does not correlate with correctness**, so verifying the report becomes an engineering step of its own.
 
-Three more conditions stack on top: generation speed exceeds human review speed; the implementer writes its own tests (its own grading criteria); and multiple agents work concurrently in the same repository and shared environment. Together these four conditions turn a failure mode that is rare in human teams — **the industrial-scale production of self-overtrust** — into a daily occurrence. The 23 documents in this directory are a system of countermeasures extracted from field records of exactly those failures.
+Three more conditions stack on top: generation speed exceeds human review speed; the implementer writes its own tests (its own grading criteria); and multiple agents work concurrently in the same repository and shared environment. Together these four conditions turn a failure mode that is rare in human teams — **the industrial-scale production of self-overtrust** — into a daily occurrence. The 25 documents in this directory are a system of countermeasures extracted from field records of exactly those failures.
 
 ## The pipeline — from completion report to merge
 
-The 23 docs form a single pipeline of "what to doubt, in what order." The further upstream a breakage occurs, the more it invalidates every verification downstream of it.
+The 25 docs form a single pipeline of "what to doubt, in what order." The further upstream a breakage occurs, the more it invalidates every verification downstream of it.
 
 ```mermaid
 flowchart TD
@@ -58,7 +58,9 @@ Even with individually sound tests, the execution environment itself can be stru
 How to treat claims, declarations, and descriptions derived from reading code rather than executing it.
 
 - [Census vs structure](census-vs-structure.md) — telling "true today" from "built to be true," and how to build safely on census premises
+- [Argument hygiene](argument-hygiene.md) — "can't" cannot be claimed from a symptom; absence can't tell forgotten from decided; extrapolation dies on use; conceded arguments return renamed; only the reason gives the class
 - [The discipline of enumeration](enumeration-discipline.md) — how completeness claims die by truncation (of output, of query, of surface definition)
+- [Completeness sweeps in practice](completeness-sweeps.md) — the techniques that close a class (sibling sites, single seams, semantic coverage, invariant tables, registry axis vs seam axis, under-reporting tools)
 - [Liveness is decided by the producer](liveness-is-producer.md) — declarations, docs, and names are records of intent; only producers record behavior
 - [Audits must match content](audit-content-match.md) — a symbol's existence is not evidence of operation, and a line number's existence is not evidence of a claim
 - [Verifying removals](removal-verification.md) — "it is dead" is a claim to falsify: enumerate producers AND readers, import-green ≠ runtime-green, assert absence
