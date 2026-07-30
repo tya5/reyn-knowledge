@@ -18,7 +18,7 @@ sources:
 
 ## A real case — the party who said "your rc=0 is the refutation" was wrong
 
-Two verifiers reported on the same PR (the docker daemon was down in the verification environment):
+The claim under test: does this PR leave the docker integration unbroken? Two verifiers reported on the same PR (in verifier B's environment, the docker daemon was down):
 
 - Verifier A: "**2 failed** (the docker integration tests)" — honestly adding "corroborated, but I have not produced a direct refutation"
 - Verifier B: "**rc=0 / 8686 passed / 19 skipped**. I also could not independently refute it."
@@ -53,10 +53,10 @@ A skip that satisfies both is a **dormant tripwire** — the moment the target m
 
 ## Layer 2 — Which code is that green about?
 
-The meaning of green/red presupposes that **what you measured is identical to what will run**. This premise breaks in both directions (there is a real case of two people falling off opposite sides on the same night):
+(Everything up to this point is Layer 1: *what ran*.) The meaning of green/red presupposes that **what you measured is identical to what will run**. This premise breaks in both directions (there is a real case of two people falling off opposite sides on the same night):
 
 - **False negative**: a virtual environment was out of sync, so an **old version** of the supposedly-fixed code was measured and misread as "still FAIL."
-- **False positive**: a strip falsification was performed by **monkeypatching the parent process**, but the mechanism by design always runs in a **fresh subprocess**. The patch never landed, and the setup could be read as **"green even with the strip = the fix works" while measuring completely unmodified code**. (It was caught only because "green despite the strip" could not be explained; editing the real source and re-measuring produced 5 REDs.)
+- **False positive**: a strip (temporarily disabling the fix) was performed by **monkeypatching the parent process**, but the mechanism by design always runs in a **fresh subprocess**, so the patch never landed. **Code with nothing disabled was being measured** — the experiment never happened, yet the "green despite the strip" result was on the table, one step away from the wrong conclusion (that the tests do not protect the fix). It was caught only because "green despite the strip" could not be explained; editing the real source and stripping again produced 5 REDs = the tests protected the fix all along.
 
 > **Before reading green/red, first establish: "which code is this green/red about?"** Subprocess boundaries, virtual environments, PYTHONPATH, and import paths are all entrances to this hole.
 

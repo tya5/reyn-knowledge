@@ -40,7 +40,7 @@ The same night, the same shape elsewhere: a dogfood scenario not running in CI �
 
 **Trap 1: a structural fix that "makes the guard impossible to forget" kills the only real verification.** As a countermeasure to the third defect above, a proposal — "a fixture auto-applied to every test that forbids loading the real filter" — was considered and **rejected**: that fixture would silently neutralize the upcoming CI job whose very purpose is to load the real filter. Before "structuring the guard," check **whether there is a verification that the guard must not kill**.
 
-**Trap 2: a reviewer's "better fix" reproduces the very defect class being fixed.** The suggestion "instead of removing the syscall from the allowlist, put it under the management of the higher-level mechanism" leaves the hole open on old kernels, because that management feature **exists only on new kernels** — and on the proposer's (new) verification host it looks closed. Proposals, too, must be examined along the axis of "in which environments does this claim hold?"
+**Trap 2: a reviewer's "better fix" reproduces the very defect class being fixed.** The suggestion for the file-truncate hole — "instead of removing the offending syscall from the allowlist, put it under the management of the higher-level mechanism" — leaves the hole open on old kernels, because that management feature **exists only on new kernels** — and on the proposer's (new) verification host it looks closed. Proposals, too, must be examined along the axis of "in which environments does this claim hold?"
 
 ## The third form — an accurate description standing in for a mechanism
 

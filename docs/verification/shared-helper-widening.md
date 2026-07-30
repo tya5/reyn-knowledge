@@ -23,6 +23,8 @@ Two callers were using the exception classes of a lazily imported HTTP library:
 
 If you now design it as "the shared helper returns the tuple `(ConnectError, ReadTimeout)`," the diff is minimal and it lands with **every test still green**. But from that moment on, at caller B, **`ConnectError` (a connection failure) is classified as a "timeout"** and routed into timeout-specific policy (automatic extension, interactive confirmation). The semantics widened silently.
 
+In this example, caller B — the one that wants only the narrow set — is the **least-opinionated caller**. The helper must not be more opinionated than B (must not insist on catching both); that is what the title means.
+
 Why does it survive review?
 
 > **Because no one asserts the negative.** A test saying "ConnectError is **not** a timeout" does not normally exist. The green suite is evidence of nothing — **the missing test is the problem itself**.
@@ -44,6 +46,8 @@ retryable = isinstance(e, (connect_err, read_timeout))
 _, read_timeout = _get_httpx_exc_types()
 is_timeout = isinstance(e, read_timeout)
 ```
+
+The return value has the same tuple shape as the rejected design — what differs is the **contract**: the helper only lays out the raw materials, and each caller unpacks and selects its own subset.
 
 ## How to apply
 

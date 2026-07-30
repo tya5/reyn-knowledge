@@ -28,7 +28,7 @@ If the replay matching key includes a hash of the request contents (which is how
 | ① New code + new fixtures (the PR as-is) | passed |
 | ② **Old code + new fixtures** (a deliberate mismatch) | **failed** |
 
-**The RED in ② is the guarantee.** If the fixtures had been passing on values unrelated to the new code, swapping the code back to the old version should leave them passing. Breaking when paired with the old code = these fixtures correspond specifically to the new code = they were recorded from the real thing. If someone hand-wrote "values that happen to pass," there is no guarantee that ② goes RED — the same experiment serves as the discriminator.
+**The RED in ② is the guarantee.** If the fixtures had been passing on values unrelated to the new code, swapping the code back to the old version should leave them passing. Breaking when paired with the old code = these fixtures correspond specifically to the new code = they were recorded from the real thing. A hand-written fixture with "values that happen to pass" would normally keep passing even against the old code (② stays green) — which is exactly why a RED in ② is evidence of recording from the real thing.
 
 > **Measure the dependence on what was supposedly re-recorded, not the claim "I re-recorded it."**
 
@@ -61,7 +61,7 @@ Generalization: **before reading green/red, confirm "did it run with the same or
 
 ### Do not co-sign by inference — only observation settles a failure
 
-**Co-signing** a peer's "pre-existing failure" claim by inference falls into the same hole. Real case: presented with a peer's report that "the 4 failures are pre-existing," a reviewer confirmed by grep that an old deprecated pattern **existed** in that test file and signed off "agreed, pre-existing" — without ever **running the suite to observe** the failures. A later clean-environment run showed **everything passes; main had been green the whole time**. Moreover, a second verifier's own "4 failures" were **a different four**, which they too retracted as contamination of their local environment (a stale editable-install remnant and a leftover `.pyc` directory causing wrong module resolution).
+**Co-signing** a peer's "pre-existing failure" claim by inference falls into the same hole. Real case: presented with a peer's report that "the 4 failures are pre-existing," a reviewer confirmed by grep that an old deprecated pattern **existed** in that test file and signed off "agreed, pre-existing" — without ever **running the suite to observe** the failures. A later clean-environment run showed **everything passes; main had been green the whole time**. Moreover, a second verifier's own "4 failures" were **a different four**, which they too retracted as contamination of their local environment (a stale editable-install remnant and a stale leftover directory containing only `.pyc` files, causing wrong module resolution).
 
 - **CI green (a clean, fixed environment) is the court of last resort for whether a failure is real.** A local full-suite run carries the runner's contamination and cannot settle the question alone.
 - **Different verifiers reporting different failure sets is a strong tell of environment contamination**, not evidence of a regression.

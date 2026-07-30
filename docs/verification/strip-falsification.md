@@ -57,7 +57,7 @@ Example: suppose the 1MB check above appears in three places — "via the web fo
 
 "I reverted to the original code and it went RED" **breaks multiple properties at once**, so it isolates nothing.
 
-Example: suppose a PR (a) added escaping for file names and (b) deleted an old validation that rejected paths containing `__`. The implementer reports "reverting the whole PR → RED." But that RED might be caused by the exception from the validation deleted in (b). **It is not evidence that the test reacted to the property the PR actually wanted to protect (collision avoidance via escaping).**
+Example: suppose a PR (a) added escaping for file names and (b) deleted an old validation that rejected paths containing `__`. The implementer reports "reverting the whole PR → RED." But that RED might come from the validation that the revert *restored* in (b) throwing its exception again. **It is not evidence that the test reacted to the property the PR actually wanted to protect (collision avoidance via escaping).**
 
 - The criterion is: "**break the single property to be protected, by itself alone, and see RED**." In this example, construct the **most dangerous intermediate state** a future edit is actually likely to produce — "remove only the escaping, leave the validation deletion in place" — and observe RED there.
 - When delegating, name the target of breakage explicitly. Not "strip the fix" but "**remove only the escaping; keep everything else**." The closer the strip is to "undoing the PR," the weaker its evidential power.
@@ -114,7 +114,7 @@ assert resolve_version() is None       # bounded: token not visible, falls back 
                                        # unbounded: finds "3.12.7" -> RED
 ```
 
-Before pushing, actually remove the cap (e.g. set `CAP = 100_000_000`) and reproduce the RED.
+Before pushing, actually remove the cap (e.g. replace the cap constant with a huge value, effectively disabling it) and reproduce the RED.
 
 ## Checklist (when delegating and when reviewing)
 

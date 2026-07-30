@@ -11,7 +11,7 @@ sources:
 
 # Operating with Separate Coder / Tester / Reviewer Agents — Who Verifies What, Reports What, and Waits for What
 
-The standard configuration for AI coding is heading toward splitting implementation (coder), testing (tester), and review (reviewer) into **separate agents**. Every document in this repository can be read as assuming that configuration — indeed, **nearly every source incident has the shape "the implementing agent's verification was green; an independent agent's verification exposed the problem,"** so this material is itself a measurement of the effect of role separation. This document is an application map that reorganizes the 23 disciplines into per-role obligations.
+The standard configuration for AI coding is heading toward splitting implementation (coder), testing (tester), and review (reviewer) into **separate agents**. Every document in this repository can be read as assuming that configuration — indeed, **nearly every source incident has the shape "the implementing agent's verification was green; an independent agent's verification exposed the problem,"** so this material is itself a measurement of the effect of role separation. This document is an application map that reorganizes the 25 disciplines into per-role obligations.
 
 ## Why separation works — and when it does not
 
@@ -58,12 +58,12 @@ And the reviewer carries a hazard no other role has:
 
 > **A reviewer's speculation arrives as an "instruction." ∴ The recipient obeys it ahead of their own measurements.**
 
-Real case: a reviewer handed over, as an instruction, the **unmeasured hypothesis** "this observation point is in external internals, so it cannot exist." The implementer had **already measured the unreachability themselves in round 1**, yet demoted that to secondary and put the reviewer's speculation first. The implementer's summary: "**The reviewer-side speculation is the more dangerous one — it arrives as an instruction, so I obeyed it before re-checking my own data.**" A coder's speculation stops inside the coder; **a reviewer's speculation overwrites measurements downstream.**
+Real case: a reviewer handed over, as an instruction, the **unmeasured hypothesis** "this observation point is inside the external service, so it cannot exist." The implementer had **already measured the unreachability themselves in round 1**, yet demoted that to secondary and put the reviewer's speculation first. The implementer's summary: "**The reviewer-side speculation is the more dangerous one — it arrives as an instruction, so I obeyed it before re-checking my own data.**" A coder's speculation stops inside the coder; **a reviewer's speculation overwrites measurements downstream.**
 
 - **When issuing instructions, separate speculation from measurement with labels** ("Measured: …" / "My hypothesis (unverified): …"). Written in the same register, the recipient cannot tell them apart.
 - **If the other party has reported measurements, rank them above your own hypothesis.**
 - **You can state explicitly "keep the conclusion, fix only the reasoning"** — a wrong reason does harm even under a correct conclusion (the wrong reason left in the code gets read by the next implementer).
-- **The recipient's defense is a default procedure, not "being careful"**: ask "is this measured?" even of instructions, and measure yourself before applying. That same night, the agent that had made this procedure a standing practice was never pushed aside, and the agent that had not was — the difference is procedure, not attentiveness ([Measuring the wrong target](measurement-target.md), principle 4). A recipient measuring and overturning an instruction is **the normal path**; when you are overturned, be grateful and record it.
+- **The recipient's defense is a default procedure, not "being careful"**: ask "is this measured?" even of instructions, and measure yourself before applying. That same night, the agent that had made this procedure a standing practice was never pushed aside, and the agent that had not was — the difference is procedure, not attentiveness (principle 4 of [The system of verification knowledge](index.md)). A recipient measuring and overturning an instruction is **the normal path**; when you are overturned, be grateful and record it.
 
 ## Obligations of the dispatcher / merger (briefing and acceptance)
 

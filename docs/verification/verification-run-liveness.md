@@ -28,7 +28,7 @@ The worst property of a hang is that it **silently eats wall-clock time**. For P
 pytest -o faulthandler_timeout=45   # a test stuck for 45 seconds dumps all thread stacks and fails
 ```
 
-This turns a hang from a "silent time thief" into a **failure that self-reports which test stopped and in which frame**. To hunt the culprit, bisect with `-x` (stop at the first failure); the innermost frame of the dump is the cause.
+This turns a hang from a "silent time thief" into a **failure that self-reports which test stopped and in which frame**. To find the culprit, run with `-x` (stop at the first failure) so the suite halts at the first hanging test; the innermost frame of the dump is the offending line.
 
 ## The cause in the real case — the "immortal async worker" anti-pattern
 

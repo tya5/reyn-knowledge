@@ -13,7 +13,7 @@ A **gate** is a test or automated check put in place to ensure a specific regres
 
 A vacuous gate is **worse** than no gate at all: as long as CI keeps returning green, nobody re-inspects that surface. Worse still, vacuous gates are often **born-vacuous** — they have never once detected the defect, yet they keep accumulating a track record of green.
 
-The following typical forms of creeping vacuity were extracted from a record of it actually happening three times in a row within a single session.
+The following typical forms of creeping vacuity were extracted from real development records (Forms 1–3 struck three times in a row on a single working day; the other forms come from separate incidents).
 
 ## Form 1 — Asserting only the terminal state
 
@@ -52,7 +52,7 @@ Example: the goal was to verify that events arrive via `push_event()`, but the p
 
 Asserting "the constant is defined" or "the module imports" **witnesses nothing about the property that the value actually makes it into the output**. A test that only goes RED on ImportError can barely detect the death of the mechanism.
 
-**How to close it (common to all forms): actually build a defective version and measure that the gate goes RED before shipping.** That is the only proof against born-vacuity. This is an application of [The discipline of strip-falsification](strip-falsification.md).
+**How to close it (common to all forms): actually build a defective version and measure that the gate goes RED before shipping.** That is the only proof that a gate is not born vacuous. This is an application of [The discipline of strip-falsification](strip-falsification.md).
 
 ## Form 4 — The prose claims two properties, the tests cover only one
 
@@ -75,7 +75,7 @@ The question that actually worked as a detector:
 
 ## Form 5 — Geometry (containment) gates have axes and hierarchy
 
-A geometric claim like "nothing overflows the screen" cannot be expressed as a single inequality. There is a record of the same hole slipping through three times in different shapes:
+A geometric claim like "nothing overflows the screen" cannot be expressed as a single inequality. There is a record of the same hole slipping through four times, in different shapes, across three incidents:
 
 | What the gate was looking at | The path that slipped through |
 |---|---|

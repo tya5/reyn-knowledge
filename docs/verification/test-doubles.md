@@ -60,7 +60,7 @@ Real case: a predicate deciding "is this execution result an error?" looked at t
 
 ## Shape 3 — None or a permissive default lets everything through the check
 
-A test meant to protect enforcement was **passing None as the resolver**. On that path, the rule was "no resolver → permit, as the safe default" — meaning **things are permitted even when the declaration is missing**. The test was green regardless of whether the declaration existed, and could not verify the very thing to protect: "no declaration → deny."
+A test meant to protect enforcement was **passing None as the resolver**. On that path, the rule was "no resolver → permit" — a permissive, fail-open default — meaning **things are permitted even when the declaration is missing**. The test was green regardless of whether the declaration existed, and could not verify the very thing to protect: "no declaration → deny."
 
 - Permission/enforcement tests must construct and pass **a real (non-None) resolver**.
 - Then falsify on top of that: only after confirming that **deleting the declaration makes the test fail** is it a test that protects the declaration.

@@ -14,7 +14,7 @@ A **sweep PR** (bulk-fix PR) is a PR that scans the entire repository and fixes 
 
 The natural review for this type of PR is **spot-checking**: pick some of the fixed items and cross-check them against primary evidence (the actual state of the PRs, the existence of the commits). In the real case, 11 items were sampled and **all of them matched**. So can this sweep be trusted?
 
-**Only half of it has been verified.** A sweep PR is dangerous in three directions, and spot-checking reaches only the first:
+**Only half of it has been verified.** A sweep PR is dangerous in three directions, and spot-checking reaches only the first two (the "fixed" side):
 
 | Danger | Appears in the diff? | Detectable by spot-checking? |
 |---|---|---|
@@ -33,7 +33,7 @@ This is the document version of "a skipped test looks green": "fixed 26" is no e
 What the independent second verifier did on this sweep serves directly as the model:
 
 1. **Actively selected the strongest candidate for "looked likely to be flipped, but was not."** A file left in place as "partially complete" — exactly the kind of item that mechanical processing would likely have flipped to "complete."
-2. **Measured the grounds for leaving it against primary evidence.** The file's claim ("the module in question is still large") was measured with `wc -l` (7488 lines / 3903 lines), confirming that leaving it untouched was correct.
+2. **Measured the grounds for leaving it against primary evidence.** The file's claim ("the module in question is still large") was measured with `wc -l` (the line counts of the two large modules cited as the reason for leaving it: 7488 and 3903 lines), confirming that leaving it untouched was correct.
 3. **Did not trust the PR numbers quoted in the diff; re-pulled them with `gh pr view`.**
 
 Only then did "**the decision not to flip was correct**" become evidence.
@@ -43,7 +43,7 @@ Only then did "**the decision not to flip was correct**" become evidence.
 When reviewing a sweep / bulk-fix PR, in addition to spot-checking:
 
 1. **Pick 1–2 "looked likely to be flipped, but was not" items yourself, and confirm against primary evidence that leaving them was correct.** How to pick: items that mechanical processing would have wrongly changed (partially implemented, conditional, or exception-status items).
-2. **Count the population yourself.** Confirm the N in "fixed M of N" with something like `git ls-tree | grep -c`. Writing "the full set" in the task request is no guarantee that the full set was actually examined.
+2. **Count the population yourself.** Confirm the N in "fixed M of N" with something like `git ls-files | grep -c '<pattern>'`. Writing "the full set" in the task request is no guarantee that the full set was actually examined.
 3. **Be suspicious of zero abstentions.** In a sweep involving semantic judgment, zero abstentions more likely means "**has no criterion for abstaining**" than "understood everything." In the real case, 2 items were held back as abstentions, and that in itself was a quality signal.
 4. **Do not trust quotations inside the diff.** Re-pull PR numbers, commits, and line counts from primary sources (`gh pr view` / `wc -l`), not from what the diff says.
 
