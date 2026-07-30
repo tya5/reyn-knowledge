@@ -1,10 +1,11 @@
 ---
 name: vacuous-gates
-description: The typical forms of born-vacuous gates — terminal-state-only asserts, positive controls on a different path, existence checks, prose-only properties. The fix is "intermediate cross-section + same delivery path + measured RED on a defective build"
+description: The typical forms of born-vacuous gates — terminal-state-only asserts, positive controls on a different path, existence checks, prose-only properties, testing only the addition and never the invariant. The fix is "intermediate cross-section + same delivery path + measured RED on a defective build + a before/after invariant"
 tags: [verification, testing]
 sources:
   - feedback_gate_vacuity_hides_in_terminal_state_only_assertions
   - feedback_containment_gate_must_cover_both_axes_and_children
+  - feedback_assert_the_invariant_not_only_the_addition
 ---
 
 # How Vacuous Gates Are Born — Tests That Stay Green on Broken Builds
@@ -93,6 +94,28 @@ The rule:
 - **When a strip comes back green, suspect the gate first.** It is more likely you measured the wrong surface, axis, or depth than that the implementation happened to be correct.
 - Exception: for gates on "derived values" the strip expectation can be **inverted** (if the label width is derived from the longest label, then shortening a label and seeing no breakage is the correct outcome = green is the expected result of that strip). **Never count a green-is-expected strip as evidence of non-vacuity.**
 
+## Form 6 — Asserting only what was added, never what must not change
+
+A test written to verify a change naturally gets pulled toward the **properties that change added**. But "has this newly appeared" and "has nothing else been disturbed" are separate claims, and a suite built only from the first can never go RED on a violation of the second.
+
+Real case: tests written for a visual change (marking the selected row) asserted only two **added** properties — "the mark is present" and "the reverse-video decoration is gone." Both were claims about the new mark; **the row's own colors staying undisturbed was never asserted**. Result: the fix for the first defect (reverse video painting a near-white block) introduced a **second** defect through the very same surface (an undeclared component class resolving to a near-black background, hiding the addressed row). The suite stayed green throughout, and the owner had to report the same spot twice.
+
+> **"Did the feature appear" and "was nothing else disturbed" are separate claims, and a suite built only from the first cannot fail on the second.** Tests for the added property look thorough precisely because they are specific, strip-falsified, and verified on real hardware — that thoroughness is exactly what hides the asymmetry, since every one of them points in the same direction ("does the new thing correctly appear").
+
+**How to close it: pin "what must not change" as its own assertion.** Write it as a **before/after comparison**, not a hard-coded expected value:
+
+```python
+def test_the_addressed_row_keeps_its_own_background():
+    before = capture_row_backgrounds(rows)   # record each row's background before marking
+    mark_row_as_addressed(rows[2])
+    after = capture_row_backgrounds(rows)
+    assert before == after                   # the background set must be unchanged by the mark
+```
+
+A hard-coded expectation (a specific color code, say) rots as the palette evolves; a before/after comparison stays true no matter how the palette changes. Ask concretely: **what does this change touch that it has no business changing?** (row colors, an adjacent widget's focus, scroll position, list ordering, and the like). Pick one and pin it as an invariant, once per change.
+
+This form shares its root with Blind Spot 3 in [Beyond the Happy Path](beyond-happy-path.md) (mechanism witness vs. appearance witness) and with the "documentation absence" lesson in [The Discipline of Dispatch Briefs](../orchestration/dispatch-briefs.md) — **a check shaped like falsification can only ask whether an existing claim can be broken. It can write a test for something that should newly appear, but an "assert of absence" for a change that should NOT happen never arises on its own.**
+
 ## Do not rely on weak detectors — divergence between siblings is luck
 
 A discovery episode from practice: out of 5 strips, exactly 1 came back green; the implementer flagged that as anomalous, chased it down, and found a real hole. But this detection **only works when siblings diverge**. If the whole family is unreachable, everything goes green and fails silently. The thing to generalize is not anomaly detection but a **reachability assertion** — have the gate itself carry "was this leg really executed?"
@@ -102,15 +125,18 @@ A discovery episode from practice: out of 5 strips, exactly 1 came back green; t
 1. Are you looking only at the terminal state? Is there an **intermediate cross-section**?
 2. Does the positive control go through the **same path**?
 3. Did you **measure RED on a defective version**?
+4. Did you assert **what must not change**, as a before/after comparison — not only what was added?
 
 Asserts of the form "X does not happen" are especially dangerous: they go green when the production path for X is merely dead (same root as [Liveness is decided by the producer](liveness-is-producer.md)).
 
 ## Sources (measured during reyn development)
 
-Forms 1–3: #3288/#3299 (three in a row in one session: layout, reachability witness, terminal-only assert). Form 4: #3358 (borrow/return asymmetry), #3363 (RESERVED_KEYS, 27 passed on the takeover strip). Weak-detector self-report: #3370. Form 5: #3311 → #3337 → #3341 (the same hole three times; in one of them a green strip was read as "well, it passed, good enough" and a second path of the same shape was shipped as-is).
+Forms 1–3: #3288/#3299 (three in a row in one session: layout, reachability witness, terminal-only assert). Form 4: #3358 (borrow/return asymmetry), #3363 (RESERVED_KEYS, 27 passed on the takeover strip). Weak-detector self-report: #3370. Form 5: #3311 → #3337 → #3341 (the same hole three times; in one of them a green strip was read as "well, it passed, good enough" and a second path of the same shape was shipped as-is). Form 6: #3490 → #3496 (the reverse-video fix introduced a second defect through the same surface; the owner reported the same spot twice).
 
 ## Related
 
 - [The discipline of strip-falsification](strip-falsification.md) — the general procedure for "measure RED on a defective version"
 - [Wiring tests vs mechanism tests](wiring-vs-mechanism.md)
 - [Structural blindness of the verification environment](environment-blindness.md) — the form where the gate's "environment" itself cannot surface the defect
+- [Beyond the Happy Path](beyond-happy-path.md) — Blind Spot 3, the sequel to the same #3490 incident (mechanism witness vs. appearance witness)
+- [Shared-Helper Widening](shared-helper-widening.md) — the same family of hole: "nobody asserts the negative"
