@@ -1,6 +1,6 @@
 ---
 name: verification-index
-description: The map of this knowledge area — what to doubt, in what order, between an agent's "done, all green" report and the merge. Where the 20 docs sit, and the 4 principles that cut across them
+description: The map of this knowledge area — what to doubt, in what order, between an agent's "done, all green" report and the merge. Where the 23 docs sit, and the 4 principles that cut across them
 tags: [verification, index, overview]
 ---
 
@@ -10,11 +10,11 @@ tags: [verification, index, overview]
 
 In development performed by AI coding agents, **the same party that implements a change also verifies it and writes the report**. The roles that a human team implicitly separates — builder, verifier, reader of the report — collapse into one context. And the reports are invariably fluent and confident: **confidence does not correlate with correctness**, so verifying the report becomes an engineering step of its own.
 
-Three more conditions stack on top: generation speed exceeds human review speed; the implementer writes its own tests (its own grading criteria); and multiple agents work concurrently in the same repository and shared environment. Together these four conditions turn a failure mode that is rare in human teams — **the industrial-scale production of self-overtrust** — into a daily occurrence. The 20 documents in this directory are a system of countermeasures extracted from field records of exactly those failures.
+Three more conditions stack on top: generation speed exceeds human review speed; the implementer writes its own tests (its own grading criteria); and multiple agents work concurrently in the same repository and shared environment. Together these four conditions turn a failure mode that is rare in human teams — **the industrial-scale production of self-overtrust** — into a daily occurrence. The 23 documents in this directory are a system of countermeasures extracted from field records of exactly those failures.
 
 ## The pipeline — from completion report to merge
 
-The 20 docs form a single pipeline of "what to doubt, in what order." The further upstream a breakage occurs, the more it invalidates every verification downstream of it.
+The 23 docs form a single pipeline of "what to doubt, in what order." The further upstream a breakage occurs, the more it invalidates every verification downstream of it.
 
 ```mermaid
 flowchart TD
@@ -38,7 +38,9 @@ The furthest upstream. If this is off, every green and red downstream is a claim
 
 The distance between "a test exists" and "the property is protected."
 
+- [Reading green](green-reading.md) — "rc=0 / N passed" says nothing about what ran; a skip is green. Did the witness execute, about which code, did it really finish
 - [The discipline of strip-falsification](strip-falsification.md) — four axes that turn a RED report into evidence (coverage, minimal break, did-it-land, whole-mechanism kill)
+- [Test doubles must match the real shape](test-doubles.md) — fakes, fixtures, None, defaults, and proxy checks manufacture fake coverage
 - [Wiring tests vs mechanism tests](wiring-vs-mechanism.md) — "the mechanism is correct" and "production reaches the mechanism" are separate asserts
 - [How vacuous gates are born](vacuous-gates.md) — terminal-state-only asserts, positive controls on the wrong path, properties that exist only in prose
 - [Prove fixes on the live path](fix-verification-live-path.md) — the diagnosis, the isolated gate, and the implementer's test are all proxies; falsify on the path the owner actually hit
@@ -59,6 +61,7 @@ How to treat claims, declarations, and descriptions derived from reading code ra
 - [The discipline of enumeration](enumeration-discipline.md) — how completeness claims die by truncation (of output, of query, of surface definition)
 - [Liveness is decided by the producer](liveness-is-producer.md) — declarations, docs, and names are records of intent; only producers record behavior
 - [Audits must match content](audit-content-match.md) — a symbol's existence is not evidence of operation, and a line number's existence is not evidence of a claim
+- [Verifying removals](removal-verification.md) — "it is dead" is a claim to falsify: enumerate producers AND readers, import-green ≠ runtime-green, assert absence
 
 ### Stage 4 — Review blind spots: which decisions never appear in the diff?
 
@@ -97,6 +100,8 @@ There are multiple records of the same person, on the same day, getting it right
 (→ [measuring the wrong target](measurement-target.md), [enumeration discipline](enumeration-discipline.md), [strip instrument integrity](strip-instrument-integrity.md))
 
 ## Reading paths by role
+
+If you run the now-standard setup where coder, tester, and reviewer are separate agents, [operating with separate coder / tester / reviewer agents](roles.md) reprojects this whole system into per-role obligations — the coder's report contract, the tester's falsification menu, the reviewer's independent verification and the instruction asymmetry, and the three merge-gate rules. It is a valid entry point on its own.
 
 - **Implementers (the agent itself, or whoever dispatches implementation)**: [strip-falsification](strip-falsification.md) → [wiring vs mechanism](wiring-vs-mechanism.md) → [prove fixes on the live path](fix-verification-live-path.md) → [fixture provenance](fixture-provenance.md) → [incomplete work](incomplete-work.md). The craft of making your own reports evidence-backed.
 - **Reviewers / co-vetters**: [sweep PRs](sweep-reviews.md) → [fix-class review](fix-class-review.md) → [beyond the happy path](beyond-happy-path.md) → [shared-helper widening](shared-helper-widening.md) → [audits must match content](audit-content-match.md) → [strip instrument integrity](strip-instrument-integrity.md). The craft of seeing outside the diff and the report.

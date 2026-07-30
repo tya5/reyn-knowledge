@@ -7,7 +7,8 @@ Language convention: `.md` = English, `.ja.md` = Japanese. Japanese is written f
 
 ## docs/verification/ (Tier 1 — verifying AI-produced artifacts)
 
-Map: [The system of verification knowledge](docs/verification/index.md) (pipeline placement of the 13 docs + 4 cross-cutting principles; meta-document with no source pins)
+Map: [The system of verification knowledge](docs/verification/index.md) (pipeline placement of all docs + 4 cross-cutting principles; meta-document with no source pins)
+Roles: [Operating with separate coder / tester / reviewer agents](docs/verification/roles.md) (the whole system reprojected onto the role axis + 4 verdict-flow pins)
 
 | Document | Source pins | Main source issues |
 |---|---|---|
@@ -31,10 +32,14 @@ Map: [The system of verification knowledge](docs/verification/index.md) (pipelin
 | [Incomplete work delays discovery](docs/verification/incomplete-work.md) | `feedback_incomplete_work_delays_defect_discovery` | #1505 #1317 |
 | [Beyond the happy path](docs/verification/beyond-happy-path.md) | `feedback_review_error_runtime_paths_not_just_happy_structural` / `feedback_live_verify_read_whole_frame_not_just_feature` | #2195 #2238 |
 | [Recovery must survive truncation](docs/verification/recovery-truncation.md) | `feedback_recovery_source_must_survive_truncation_review_gate` | #2259 #2260 |
+| [Reading green](docs/verification/green-reading.md) | `feedback_green_is_not_evidence_it_ran_skip_is_green` / `feedback_verify_identity_of_measured_code_before_reading_green_or_red` / `feedback_req_resp_plus_one_swallowed_exception` | #2994 #3019 #3031 #2980 #1413 |
+| [Test doubles must match the real shape](docs/verification/test-doubles.md) | `feedback_test_fake_inventing_a_field_makes_a_dead_gate_look_tested` / `feedback_envelope_detection_test_real_payload_shape` / `feedback_envelope_shape_fix_verify_fixture_matches_live_producer` / `feedback_enforcement_test_real_resolver_not_none` / `feedback_fake_backend_unit_misses_real_integration` / `feedback_roundtrip_test_nondefault_value` / `feedback_test_claim_must_match_test_content` | #3037 #1439 #1214 #1215 #1356 #1363 #1142 #1146 #1297 |
+| [Verifying removals](docs/verification/removal-verification.md) | `feedback_falsify_removal_dead_premise_all_producers` / `feedback_refalsify_own_evidence_readers_and_live_dead_names_before_removal` / `feedback_import_green_not_runtime_green_decouple_consumers` / `feedback_verify_delete_target_absent_not_just_keep_present` / `feedback_removal_docsync_kept_concept_ne_kept_symbol` | #2104 #2151 #2434 |
+| [Operating with separate coder / tester / reviewer agents](docs/verification/roles.md) | `feedback_reviewer_speculation_arrives_as_instruction_and_outranks_measurement` / `feedback_gate_merge_on_covet_verdict_not_batch_read_and_merge` / `feedback_wait_for_updated_verdict_before_merge_after_raising_finding` / `feedback_covet_note_gates_author_final` | #3437 #3471 #2774 #2826 #1603 |
 
 fixture-provenance additionally consolidates `feedback_verify_failure_claims_by_observation_not_inference` (#1800 #2059 #2060).
 
-Source consolidators: `feedback_verification_blind_spot_family` (16 pins → 13 docs, 2026-07-30) and `feedback_verification_discipline_family` (15 pins → 7 new docs + the fixture-provenance extension, 2026-07-30). Both in the memory-curator dir.
+Source consolidators: `feedback_verification_blind_spot_family` (16 pins → 13 docs, 2026-07-30) and `feedback_verification_discipline_family` (15 pins → 7 new docs + the fixture-provenance extension, 2026-07-30). Both in the memory-curator dir. Batch 3 (2026-07-30): 15 unconsolidated single pins → 3 docs (reading green / test doubles / verifying removals) + 4 verdict-flow pins → the roles guide.
 
 ## docs/git-github/ (Tier 2 — agent-driven git/CI operation hazards) — not started
 
