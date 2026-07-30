@@ -8,6 +8,7 @@ sources:
   - feedback_sub_agent_dispatch_assertion_shape_verify
   - feedback_sub_agent_primary_evidence_cross_reference
   - feedback_go_decision_not_recommendation_for_planfirst_peer
+  - feedback_missing_doc_for_new_feature_is_undetectable_by_stale_checks
 ---
 
 # The Discipline of Dispatch Briefs — Agents Do Only What Is Written, at the Altitude It Is Written
@@ -55,6 +56,14 @@ Measured case: after running roughly 15 PRs (change proposals) on implementation
 - **On the review side**: flag any "user-visible change" whose PR file list contains no docs/ (an implementation-only PR is a sign of documentation debt).
 - **When fanning out many PRs in parallel**: a two-stage setup also works — minimal documentation in each PR, plus asking a docs owner for an exhaustive gap check at each milestone ([Completeness Sweeps in Practice](../verification/completeness-sweeps.md)).
 
+**Why a "documentation staleness check" alone is not enough.** A mechanism that detects documentation rot (an audit that hunts for a mismatch between what's written and what's implemented) is, in principle, **shaped like falsification** — it checks "has this claim become a lie?" But a brand-new feature with **no documentation at all** has no existing claim to contradict. No grep, no reviewer keyword sweep, and no CI drift gate can catch it, because **absence never shows up in a diff**.
+
+Measured case: an entire conversation-pane feature arc (five merged PRs) added not a single line to the feature list or the reference docs. The author's own dispatch-brief checklist only asked "does this make some doc a lie?", and the honest answer was no every time — this was not a detection failure but **a case where the question itself was shaped to be blind to absence**. It surfaced through a docs owner's cross-cutting audit.
+
+- **Always ask "which doc should this appear in" as a separate question from "does this make a doc a lie"**: for a brief that adds anything a user can see or invoke (a keybinding, a screen, a visible affordance, a command, a configuration key), raise this second question as its own required item.
+- **Mind the write order**: a feature-list row is normally a link into a reference section that already exists, so **write the section first and add the list row second**. Doing it in reverse creates a dangling reference — a row with nowhere to link.
+- **Inventory a multi-PR feature arc again at its end, not just per PR**: each individual PR can look complete in the sense of "not making any doc a lie," while the feature list as a whole is missing **every row for that entire feature**. The completeness of a single item and the completeness of the ledger (registry) are different checks.
+
 ## 3. Write verification duties as concrete actions — checking labels and checking content are different things
 
 A request to "verify that ..." gets satisfied by the **cheapest check** the receiver can find. Two measured cases (the same review was split across several subagents — child agents spawned for auxiliary work — and these happened on two of them, the A and D of the Sources):
@@ -98,7 +107,7 @@ Measured case: the silence created by this ambiguity was misdiagnosed by the dis
 
 ## Sources (measured during reyn development)
 
-Invariant: #2620 (2026-07-16, the bus.py misnaming — the analysis by the implementing agent that refused to copy is the canonical form of this rule) + #3045 (2026-07-17, demonstration of the "delegate" tier: shown two candidate models, the agent correctly refused with "neither — a synthesis") + the same night's list-retrieval design (reachable ≠ usable). Documentation as a required item: 2026-07-05 (about 15 PRs on implementation-centric briefs accumulated holes in the feature list and reference, surfaced by an owner remark; contrasted with the group of changes whose briefs included documentation updates). Verification duties: the PR-N3 review (subagent A: labels only, "no violations" → CI detected 6, rewritten in commit a26c3e9c / subagent D: surface inference from directories → fully reverted in commit 9516221f). GO: #2296 ("KEEP recommended" read as a leaning; the counterpart correctly waited, and the dispatcher misdiagnosed a stall).
+Invariant: #2620 (2026-07-16, the bus.py misnaming — the analysis by the implementing agent that refused to copy is the canonical form of this rule) + #3045 (2026-07-17, demonstration of the "delegate" tier: shown two candidate models, the agent correctly refused with "neither — a synthesis") + the same night's list-retrieval design (reachable ≠ usable). Documentation as a required item: 2026-07-05 (about 15 PRs on implementation-centric briefs accumulated holes in the feature list and reference, surfaced by an owner remark; contrasted with the group of changes whose briefs included documentation updates) + #3483/#3487/#3488/#3489/#3491 (a five-PR conversation-pane feature arc that shipped complete while leaving no trace in the feature list or reference docs, surfaced by a docs owner's cross-cutting audit). Verification duties: the PR-N3 review (subagent A: labels only, "no violations" → CI detected 6, rewritten in commit a26c3e9c / subagent D: surface inference from directories → fully reverted in commit 9516221f). GO: #2296 ("KEEP recommended" read as a leaning; the counterpart correctly waited, and the dispatcher misdiagnosed a stall).
 
 ## Related
 
