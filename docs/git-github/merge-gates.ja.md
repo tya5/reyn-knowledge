@@ -9,6 +9,7 @@ sources:
   - feedback_merge_order_signature_conflict_sweep_after_landing
   - feedback_dont_over_park_ready_prs_merge_promptly
   - feedback_outstanding_item_must_live_where_the_merge_gate_reads
+  - feedback_pending_ci_check_is_not_yet_a_pass
 ---
 
 # マージは状態で確認する — hook・ポーラー・並行 PR の罠
@@ -25,6 +26,11 @@ sources:
 
 - 「CI が緑なら `gh pr merge` を実行する」という条件付きコマンド(擬似コード: `if CI緑 → merge`)と「merged ✅」の報告を**同じターン(エージェントの1応答)の中で並列に送らない**。マージ実行 → state 確認 → 報告、の順を守る。どうしても同時なら「緑になり次第マージします(未完了)」という**未完了の言い方**にする。
 - 他者の「全部 merge 済み」報告も同じゲートを通す: 伝聞を伝播する前に `state==MERGED` を自分で確認する(open のまま残った PR が「全完了」報告に混ざっていた実測がある)。
+
+**同じ穴の手前側 — pending(判定待ち)の CI チェックを「合格」の側に数えない。** `gh pr view --json statusCheckRollup` が返す `pending` は「まだ終わっていない」を意味するだけで、「通る」を意味しない。実測: 「CI 残りは pytest が pending なだけで、レビューを止める要件ではない」と**確定した所見として**報告してしまった — この報告者自身が、同じ日の別件で `pending` を「無い」と誤読していたことに気づいた直後だった。
+
+- pending を含む `mergeStateStatus`(GitHub がマージ可否を判定する状態フィールド)を「実質クリーン」と言い切らない。**「まだ失敗していないだけ」であって「合格が確定した」ではない** — 「まだ反証されていない」と「確認済み」を混同しないという規律([論拠の衛生](../verification/argument-hygiene.ja.md)と同種)の、CI 版である。
+- 報告するときは pending の件数が **0 になるまで待つ**か、待てないなら「pending N 件、まだ失敗はしていない(未確定)」と明示的にヘッジ(留保)して書く。
 
 ## 2. 厳格なブランチ保護の下では、マージ失敗が「常態」になる
 
@@ -75,6 +81,7 @@ sources:
 
 - [ ] 「merged」の報告は `state==MERGED` + `mergedAt` 非 null の確認後か
 - [ ] hook・通知・コマンド実行の事実を merged の証拠にしていないか
+- [ ] pending の CI チェックを「合格」「ブロックしない」と言い切っていないか。pending=0 を待つかヘッジしたか
 - [ ] マージ決定が反転したとき、close より先にポーラーを殺したか。ポーラーに OPEN ガードはあるか
 - [ ] 条件付き CLEAR を機械可読の状態(未チェック Test plan / draft)にしてからポーラーを張ったか
 - [ ] シグネチャ変更を land した直後、main の grep とフルスイートを回したか
@@ -82,7 +89,7 @@ sources:
 
 ## 出典(reyn 開発での実測)
 
-hook 偽発火: #2043/#2051(条件 gate 不発なのに並列 ack)・#2447(draft PR で hook 3回誤発火)。strict 常態化: #3000 設定後の #3165→#3167。ポーラーの reopen+merge: #2928(オーナー却下の1分後)。残件の置き場: #3349(修正だけマージ、テスト積み残し。change request が同一ユーザ環境で使えない実測込み)。シグネチャ衝突: #3121 アーク(#3123×#3122、フルスイートを回した第三者が発見)。寝かせ過ぎ: #2840(4時間で #2841 と衝突)。
+hook 偽発火: #2043/#2051(条件 gate 不発なのに並列 ack)・#2447(draft PR で hook 3回誤発火)。pending の誤読: #3494(2026-07-30、同日別件での `pending` 誤読の直後に、別 PR の pending を「レビュー要件でない」と確定所見として報告)。strict 常態化: #3000 設定後の #3165→#3167。ポーラーの reopen+merge: #2928(オーナー却下の1分後)。残件の置き場: #3349(修正だけマージ、テスト積み残し。change request が同一ユーザ環境で使えない実測込み)。シグネチャ衝突: #3121 アーク(#3123×#3122、フルスイートを回した第三者が発見)。寝かせ過ぎ: #2840(4時間で #2841 と衝突)。
 
 ## 関連
 
