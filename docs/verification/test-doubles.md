@@ -95,7 +95,7 @@ A test whose docstring claims to "verify the loader/resolver/runtime" while its 
 
 ## Sources (measured during reyn development)
 
-Shape 1: #3037 (gate, audit, and recovery — all three faces dead at once; includes the AST-vs-field-set diff check and the proof of that check's own soundness). Shape 2: #1439 Fix#2 (a no-op fix missing all 58 items passed review; the real-trace replay gate caught it). Shape 3: #1214→#1215 (a None-resolver test hid a missing declaration). Shape 4: #1356→#183→#1363 (the missing `-i`). Shape 5: #1142→#1145/#1146 (113/113 by round-tripping every setting at its default). Shape 6: PR-N11→N12 (claiming "loader verification" with YAML parsing only) and #1297 (co-signing "faithful reproduction" on aggregate falsification alone).
+Shape 1: #3037 (gate, audit, and recovery — all three faces dead at once; includes the AST-vs-field-set diff check and the proof of that check's own soundness). Shape 2: #1439 Fix#2 (a no-op fix missing all 58 items passed review; the real-trace replay gate caught it). Shape 3: #1214→#1215 (a None-resolver test hid a missing declaration). Shape 4: #1356→#1363 (the missing `-i`). Shape 5: #1142→#1145/#1146 (113/113 by round-tripping every setting at its default). Shape 6: PR-N11→N12 (claiming "loader verification" with YAML parsing only) and #1297 (co-signing "faithful reproduction" on aggregate falsification alone).
 
 ## Related
 

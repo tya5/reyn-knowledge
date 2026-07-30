@@ -32,10 +32,10 @@ If all three line up, a dead-job stall is confirmed. **If even one of the test p
 
 ```bash
 # Example of the three-point measurement (<agent> = the agent, <worktree> = its working tree)
-gh pr list --author <agent>            # 1. is the work absent from the open PRs?
+gh pr list -R <owner>/<repo> --author <agent>   # 1. is the work absent from the open PRs?
 git -C <worktree> status --porcelain   # 2. uncommitted diffs present?
 git -C <worktree> log --oneline -3     #    any new commits?
-ps aux | grep pytest                   # 3. is the awaited process alive?
+pgrep -fl pytest                       # 3. is the awaited process alive? (ps aux | grep matches itself)
 ```
 
 > **"The notification hasn't arrived" is not evidence of "it's still running."** The notification is an event on the side of the producer (the process that generates the notification); if the producer dies, the notification dies with it (the operational version of [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md)).

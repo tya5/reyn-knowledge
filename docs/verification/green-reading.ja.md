@@ -86,7 +86,7 @@ AとBは、**同じテストの別の分岐**を通っていた(A = 実ビルド
 
 ## 出典(reyn 開発での実測)
 
-skip は緑: #2994(docker デーモン停止下の rc=0 を「反証」と誤読、`-rs` で 19 skips が全部 docker と判明)。健全な skip の判別: #3019。41日間の素通り: #2980。測定対象の同一性: #3031(親プロセス patch の false-positive)と同夜の venv 未同期(false-negative)。飲み込まれた例外: #187/#1413(`response.choices[0]` が空応答で IndexError → ループ全体が無音で死ぬ → retry + 明示エラー化で修正)。
+skip は緑: #2994(docker デーモン停止下の rc=0 を「反証」と誤読、`-rs` で 19 skips が全部 docker と判明)。健全な skip の判別: #3019。41日間の素通り: #2980。測定対象の同一性: #3031(親プロセス patch の false-positive)と同夜の venv 未同期(false-negative)。飲み込まれた例外: #1413(発見はアーク187の実地試験 B1。`response.choices[0]` が空応答で IndexError → ループ全体が無音で死ぬ → retry + 明示エラー化で修正)。
 
 ## 関連
 

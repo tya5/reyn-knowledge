@@ -30,7 +30,7 @@ Whether each arm of an A/B (arm = one of the two configurations being compared) 
 
 ## 2. A confounded number is not published — not even with a caveat
 
-A number whose measurement conditions turn out to have been broken (the system under test was handicapped) is **not published even with** a "reference value" or "lower bound" **annotation**. Numbers drop their annotations and walk off on their own, and later sessions and documents will quote the bare figure. Measured: the scoring harness was correct, but the system under test had been running in an environment where its own self-checks were broken — just before the number came out, it was classified as confounded, and the decision taken was to **checkpoint and re-measure faithfully in the next slot**.
+A number whose measurement conditions turn out to have been broken (the system under test was handicapped) is **not published even with** a "reference value" or "lower bound" **annotation**. Numbers drop their annotations and walk off on their own, and later sessions and documents will quote the bare figure. Measured: the scoring harness was correct, but the system under test had been running in an environment where its own self-checks were broken — just before the number came out, it was classified as confounded, and the decision taken was to **checkpoint (record the state and the judgment so far, and stop for now) and re-measure faithfully in the next measurement slot**.
 
 - The question before emitting: "**Is every input to this number faithful?**" (Do the measurement conditions measure the claimed capability, or the handicap of a broken condition?)
 - Derived rule: a measurement whose **verification loop touches the answer key** (iterating against the test leaks the answer) **cannot be published** as an external score — it retains value as an internal stability signal (use it strictly for that purpose, and do not call it an official score).
@@ -42,12 +42,12 @@ Measured (all on localhost, at zero billing cost): a single embedding call sent 
 ```
 The caller intends "no retries specified (None)"
 → a lower library's `max_retries or DEFAULT` converts None into 2
-→ the SDK sends 3 HTTP requests per call
-× 3 retries at the upper layer
+→ the SDK sends 3 HTTP requests per attempt (1 initial + 2 added retries)
+× 3 attempts at the upper layer (its retry setting "3" is implemented as total attempts)
 = 9 requests (write "3" in the config, and it silently becomes 9)
 ```
 
-- **Before writing or reading "retries N times," count what is on the wire** — when retry layers nest, the configured values multiply.
+- **Before writing or reading "retries N times," count what is on the wire** — when retry layers nest, the **attempt counts** multiply. Worse, what a setting means differs per layer ("added retries" vs "total attempts" — the example above is 3 attempts × 3 requests = 9). So what you multiply is never the configured values but the measured attempts × requests.
 - **Suspect the `x or DEFAULT` shape**: the caller's "not specified (None)" turns into the library's default. "Not specifying" and "disabling" are different things.
 - **Name the unit your own log is counting**: attempt / call / request / round-trip are all different units.
 - **Timeouts carry the same altitude gap**: an SDK's `timeout=` is the deadline **per retried request**, not the overall deadline — `timeout: 60` silently becomes 180 seconds. The risk is not "the library ignores your setting" but "**it honors it at a different altitude than the reader assumed**."
@@ -58,11 +58,11 @@ The caller intends "no retries specified (None)"
 Immediately before reporting a fix as "verified," ask yourself the following (every item was actually stepped on in practice):
 
 1. **N=1, or N≥5?** A system containing an LLM is stochastic; a single success is consistent both with "fixed" and with "it just dodged it this time."
-2. **Does the test input overlap the surface of the fix itself?** Testing with a sentence nearly identical to the guidance text the fix added, and succeeding = **you only measured a match against your own fix**. Ask yourself: "If I deleted that guidance text, would this test still pass?"
+2. **Does the test input overlap the surface of the fix itself?** Testing with a sentence nearly identical (in the measured accident, exactly identical) to the guidance text the fix added, and succeeding = **you only measured a match against your own fix**. Ask yourself: "If I deleted that guidance text, would this test still pass?"
 3. **Did you separate the structural axis from the behavioral axis?** "It became reachable" (it now appears in the listing) and "it gets chosen given natural input" are different axes. Do not say "verified" on the former alone.
 4. **Attribution ablation (reverting one factor at a time)**: is there other state you changed together with the fix (deleting a cache, etc.)? "If I revert only my own change, does the behavior regress?" — in the measured case, the true cause of the improvement was the state clearing done at the same time, and the fix itself was irrelevant.
 5. **Did you decompose the ambiguous input?** If behavior that looked like "the wrong choice" is reasonable as a different interpretation of an ambiguous request, it is not a defect — "it was not a defect" is also a legitimate conclusion.
-6. **If the fix originated from a benchmark**: first test whether the target is already reachable through the general path. "Fixing" something that is reachable by adding priority placement or micro-tuning prompts is a **soft cheat** (benchmark-specific tuning); the correct answer is a fix on the general path.
+6. **If the fix originated from a benchmark**: first test whether the target is already reachable through the general path. **If reachable**, no priority placement or prompt micro-tuning is needed — adding it anyway is a **soft cheat** (tuning that eases only that benchmark); in the measured case exactly such an addition was sent back by the owner. **If unreachable or awkward to use**, the thing to fix is the general path itself (a form that helps every user), not a benchmark-specific shortcut.
 
 ## 5. Measurement proves only positives — do not use it as grounds for rejection
 
@@ -71,15 +71,16 @@ The owner's challenge (2026-06-19): "Judging an improvement proposal by measurem
 - What measurement can prove is only the **positive** (it worked in this environment). Generalizing a negative from a limited environment into "it works nowhere" is logically invalid.
 - Accept or reject improvement proposals (guidelines, prompt improvements, and the like) as a **design judgment**: is it sound, low-cost, harmless, and plausibly beneficial in other environments? "I could not measure an effect in my environment = reject" is wrong.
 - Exception: **structural redundancy** (the system already does the same thing structurally) is an environment-independent fact, and a legitimate ground for rejection without measurement.
+- Relation to §4: §4 states the evidence requirements for whoever claims the positive ("it's fixed"); this section is its flip side — since measurement proves only positives, rejection on a negative ("it doesn't help") is the job of design judgment, not measurement. Even if N≥5 shows no improvement, that only means "we cannot say it's fixed"; adoption returns to design judgment. (5 is not a magic number — an operational floor for telling a one-off fluke from a trend in a probabilistic system.)
 
 ## 6. Performance problems in an environment you cannot reproduce are diagnosed by falsification, not confirmation
 
-For a performance degradation or freeze that does not reproduce in your own environment (it occurs only on the other party's machine), do not ship a fix derived from static profiling and call it "fixed." Measured: a fix that was a genuine improvement by static analysis had **zero effect** on the other party's freeze (the true cause was on a different path). What prevented the next two wrong fixes was a chain of falsifications:
+For a performance degradation or freeze that does not reproduce in your own environment (it occurs only on the other party's machine), do not ship a fix derived from static analysis (reading the code without executing it) and call it "fixed." Measured: a fix that was a genuine improvement by static analysis had **zero effect** on the other party's freeze (the true cause was on a different path). What prevented the next two wrong fixes was a chain of falsifications:
 
-1. **Falsify the hypothesized subsystem wholesale with a config-lever A/B**: have the other party flip a setting that bypasses the hypothesized layer. If the symptom persists, the entire hypothesis (past fixes included) is rejected in one shot. Cheapest and environment-independent — fire this first.
+1. **Falsify the hypothesized subsystem wholesale with a config-lever A/B**: have the other party flip a setting that bypasses the hypothesized layer. If the symptom persists, the entire hypothesis (past fixes included) is rejected in one shot. Cheapest relative to its decisive power — one round trip rejects a whole subsystem — and environment-independent; fire this first.
 2. **Pincer with the gaps in the event log**: the blank between two clock-synchronized events localizes the fault to uninstrumented synchronous code.
 3. **A stack dump is decisive**: capture the stack once during the hang, and the function that is stuck is named outright.
-4. **Cheap behavior-fork questions**: "every turn, or periodic?" "are there images in the history?" — free ways to narrow down the subsystem.
+4. **Cheap behavior-fork questions**: "every turn, or periodic?" "are there images in the history?" — free ways to narrow down the subsystem (weak decisive power on their own; run them alongside 1–3).
 
 The order of fixes is also disciplined: relieve the acute symptom first with the **minimal fix that is certainly correct**, and **split off** delicate optimizations (those whose interaction with recursion/recovery is unproven) into a follow-up with a tracking number.
 
@@ -91,11 +92,11 @@ The order of fixes is also disciplined: relieve the acute symptom first with the
 - [ ] Before writing "N times": did you count on the wire? Any `x or DEFAULT`? Did you name the unit your log counts?
 - [ ] Before "it's fixed": N≥5 / overlap between input and fix surface / structural vs. behavioral axis / ablation / decomposition of ambiguity / not a soft cheat?
 - [ ] Are you rejecting an improvement proposal on a limited-environment negative (did you decide by design judgment)?
-- [ ] An irreproducible report: did you run the falsification chain (config lever → log gaps → stack) instead of closing it on static analysis?
+- [ ] An irreproducible report: did you run the falsification chain (config lever → log gaps → stack → behavior-fork questions) instead of closing it on static analysis?
 
 ## Sources (measured during reyn development)
 
-A/B arms: #2187 (an editable install silently shadowed the environment variable and contaminated an arm / a differential asserted from a single point → an orthogonal mechanism was found). Confounded numbers: FP-0008 C7 (2026-05-30, a score from an environment with broken self-checks was classified as confounded just before publication; checkpointed). Altitude of units: #3047 (2026-07-17, 1 embed = 9 HTTP requests, sparked by the owner's one-liner; cost recording is a structural lower bound) + #3045 (the timeout altitude gap; the author falsified their own docstring). Overfitting: 2026-05-17 scenario D (an N=1 "verified" with a sentence identical to the guidance text → the true cause was the simultaneous cache deletion; the same author had previously verified with 430 calls × 10 hypotheses with rejection criteria). Soft cheat: #187 (an addition to priority placement was sent back by the owner — it was reachable via the general path). Positives only: 2026-06-19 owner directive. Internal signal: 2026-05-31 (scores whose verification loop leaks the answer are not published; the internal value is retained). Falsification diagnosis: #2937 (a genuine improvement with zero effect) → #2938 (true cause: an O(N×M) re-scan per message) → #2939 (delicate optimization split into a follow-up).
+A/B arms: #2187 (an editable install silently shadowed the environment variable and contaminated an arm / a differential asserted from a single point → an orthogonal mechanism was found). Confounded numbers: FP-0008 C7 (2026-05-30, a score from an environment with broken self-checks was classified as confounded just before publication; checkpointed). Altitude of units: #3047 (2026-07-17, 1 embed = 9 HTTP requests, sparked by the owner's one-liner; cost recording is a structural lower bound) + #3045 (the timeout altitude gap; the author falsified their own docstring). Overfitting: 2026-05-17 scenario D (an N=1 "verified" with a sentence identical to the guidance text → the true cause was the simultaneous cache deletion; the same author had previously verified with 430 calls × 10 hypotheses with rejection criteria). Soft cheat: arc-187 (an internal campaign label, not an issue number; an addition to priority placement was sent back by the owner — it was reachable via the general path; the episode is recorded in #1416). Positives only: 2026-06-19 owner directive. Internal signal: 2026-05-31 (scores whose verification loop leaks the answer are not published; the internal value is retained). Falsification diagnosis: #2937 (a genuine improvement with zero effect) → #2938 (true cause: an O(N×M) re-scan per message) → #2939 (delicate optimization split into a follow-up).
 
 ## Related
 

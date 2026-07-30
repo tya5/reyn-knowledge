@@ -32,10 +32,10 @@ sources:
 
 ```bash
 # 3点測定の例(<agent> は対象エージェント、<worktree> はその作業ツリー)
-gh pr list --author <agent>            # 1. open な PR に当該作業が無いか
+gh pr list -R <owner>/<repo> --author <agent>   # 1. open な PR に当該作業が無いか
 git -C <worktree> status --porcelain   # 2. 未コミット差分の有無
 git -C <worktree> log --oneline -3     #    新しい commit の有無
-ps aux | grep pytest                   # 3. 待っているはずのプロセスの生存
+pgrep -fl pytest                       # 3. 待っているはずのプロセスの生存(ps aux | grep は grep 自身をヒットさせる)
 ```
 
 > **「通知が来ていない」は「まだ走っている」の証拠ではない。** 通知は producer(通知を生み出す側のプロセス)の出来事であり、producer が死ねば通知も来ない([生死は producer で判定する](../verification/liveness-is-producer.ja.md)の運用版)。

@@ -7,7 +7,7 @@ description: A pre/post-merge state-check procedure. Confirm merged by state →
 
 **When to use**: merging a PR / receiving a "merged it" report / merging several PRs in a row.
 
-Premise: **no report, display, or hook output saying "merged" is evidence of a merge**. The only evidence is server-side state.
+Premise: **no report, display, or hook output (a hook = a handler that runs automatically on an event) saying "merged" is evidence of a merge**. The only evidence is server-side state.
 
 ## Step 1 — Confirm merged by state
 
@@ -21,16 +21,19 @@ gh pr view <PR> --json state,mergedAt,mergeCommit
 ## Step 2 — Stop auto-merge and pollers first (before reversing a decision)
 
 ```bash
-gh pr view <PR> --json autoMergeRequest        # is auto-merge armed?
+gh pr view <PR> --json autoMergeRequest        # is GitHub auto-merge armed?
 gh pr merge --disable-auto <PR>                # disarm before reversing
+pgrep -fl <poller-name>                        # a homegrown merge poller is NOT stopped by gh —
+kill <PID>                                     # find the process and kill it
 ```
 
 - When withdrawing or reversing a merge decision, **kill the already-dispatched automation (auto-merge, merge pollers) first**. Measured: a poller reopened and merged a PR that was supposed to be closed.
 - Automation keeps executing **the decision as of dispatch time** — a human's change of mind is not among its inputs.
+- Permanent fix: give the poller a guard that **re-checks the PR's state==OPEN immediately before merging** (prevents the reopen+merge accident from recurring).
 
 ## Step 3 — Put remainders where the gate reads
 
-- Work that remains after the merge (follow-ups) goes to **the surface the merge gate actually reads** (an open issue). PR-body checkboxes, conversation logs, and your own memory are not read by the gate.
+- Work that remains after the merge (follow-ups) goes to **the surface the merge gate actually reads** (an open issue) — the gate being whatever list the merge decider or automated check necessarily consults before closing. Open issues appear on that list; PR-body checkboxes, conversation logs, and your own memory appear on nobody's list.
 - If the PR contains `Closes #N`, run [closing-keyword-check](../closing-keyword-check/skill.md) first.
 
 ## Step 4 — After serial merges, check the composition
@@ -41,7 +44,7 @@ git log --oneline -<N> origin/main             # the PRs that landed today
 # run one full check on the composed main (each PR green ≠ composition green)
 ```
 
-- Parallel PRs **break in composition while each stays green** (duplicate function additions, colliding signature changes). Right after landing, run the suite once against the **composed result**, not per PR.
+- Parallel PRs **break in composition while each stays green** (measured: colliding signature changes). Right after landing, run the suite once against the **composed result**, not per PR.
 - Especially: right after merging a series of PRs that touched the same central file.
 
 ## Step 5 — Sync your local checkout after the merge
@@ -51,7 +54,7 @@ git fetch origin && git status                 # make the local lag visible
 git pull --ff-only                             # catch up before working
 ```
 
-- A server-side merge **does not move your local checkout**. Grepping a stale local produces false findings, and pushing onto a stale base becomes a silent mass revert. After merging, always sync before the next piece of work.
+- A server-side merge **does not move your local checkout**. Grepping a stale local produces false findings, and a branch cut from a stale base silently carries a rollback of other people's changes. After merging, always sync before the next piece of work.
 
 ## Background
 

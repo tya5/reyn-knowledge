@@ -84,7 +84,7 @@ Before attributing a short run or a mid-course stop to "model capability" or "a 
 
 ## Sources (measured during reyn development)
 
-Skips are green: #2994 (rc=0 under a stopped docker daemon misread as a "refutation"; `-rs` revealed all 19 skips were docker). Telling healthy skips apart: #3019. The 41-day pass-through: #2980. Identity of the measured code: #3031 (the parent-process-patch false positive) and the unsynced venv the same night (the false negative). Swallowed exceptions: #187/#1413 (`response.choices[0]` raised IndexError on an empty response → the whole loop died silently → fixed with retry + an explicit error).
+Skips are green: #2994 (rc=0 under a stopped docker daemon misread as a "refutation"; `-rs` revealed all 19 skips were docker). Telling healthy skips apart: #3019. The 41-day pass-through: #2980. Identity of the measured code: #3031 (the parent-process-patch false positive) and the unsynced venv the same night (the false negative). Swallowed exceptions: #1413 (found in arc-187 field test B1; `response.choices[0]` raised IndexError on an empty response → the whole loop died silently → fixed with retry + an explicit error).
 
 ## Related
 

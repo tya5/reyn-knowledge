@@ -7,7 +7,7 @@ description: A triage procedure for agents that look stalled. Your own last mess
 
 **When to use**: a peer you dispatched to has gone silent / a report is stuck at "waiting on tests" with no visible motion / the watcher escalated an idle candidate.
 
-Premise: an agent's silence is ambiguous (quietly working / waiting on the LLM / waiting on context compaction / waiting on a dead background job / genuinely stopped). The checks below are ordered **cheapest first**.
+Premise: an agent's silence is ambiguous (quietly working / waiting on the LLM / waiting on context compaction (automatic summarization of the conversation history) / waiting on a dead background job / genuinely stopped). The checks below are ordered **cheapest first**.
 
 ## Step 1 — Re-read your own last message (the cheapest check)
 
@@ -16,16 +16,16 @@ Premise: an agent's silence is ambiguous (quietly working / waiting on the LLM /
 
 ## Step 2 — Check the machine declaration directly
 
-- Look at the session's mechanical active/idle **declaration (a bool)**, not the LLM-written status string ("waiting on CI," etc.) — **a repeated identical string is a staleness signal, not evidence of activity**.
-- If the declaration says active, keep open the possibility that it is just quiet during a long, correct computation. Go to Step 5.
+- Look at the session's mechanical active/idle **declaration (a bool)** (the assumed setup: each session declares via its stop hook — [Detecting Stalled Agents](../../docs/orchestration/stall-detection.md) §4; read that bool field), not the LLM-written status string ("waiting on CI," etc.) — **a repeated identical string is a staleness signal, not evidence of activity**.
+- If the declaration says active, keep open the possibility that it is just quiet during a long, correct computation. Go to Step 5. If it says idle (or there is no declaration mechanism), go to the measurements of Step 3.
 
 ## Step 3 — The three-point measurement (never guess)
 
 ```bash
-gh pr list --author <agent>            # 1. is the work absent from the open PRs?
+gh pr list -R <owner>/<repo> --author <agent>   # 1. is the work absent from the open PRs?
 git -C <worktree> status --porcelain   # 2. uncommitted diffs present?
 git -C <worktree> log --oneline -3     #    any new commits?
-ps aux | grep <the awaited process>    # 3. is the process alive?
+pgrep -fl <process-name pattern>       # 3. is the process alive? (avoid ps aux | grep — grep matches itself)
 ```
 
 ## Step 4 — Attribute the cause from the results
@@ -34,7 +34,7 @@ ps aux | grep <the awaited process>    # 3. is the process alive?
 |---|---|---|
 | No PR + uncommitted diffs + no process | **Waiting on a dead background job** (most frequent) | Nudge (a light check-in) and have it commit to recover the work |
 | Even one process alive | Legitimately in progress | Don't rush it. Only cross-check the duration in Step 5 |
-| No diffs, no process, active until recently | Absorbed without pushing, or waiting on compaction | Nudge first and give it time to reply. Restart is the last resort |
+| No diffs, no process, active until recently | Working without output (reading, thinking), or waiting on compaction | Nudge first and give it time to reply. Restart is the last resort |
 | Local commits exist but nothing pushed | False stall (merely invisible) | Put "push at every milestone + one-line status" into the next brief |
 
 ## Step 5 — Cross-check "currently running" against the known duration
