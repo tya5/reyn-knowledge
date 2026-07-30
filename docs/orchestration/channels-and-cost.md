@@ -28,7 +28,7 @@ Running multiple agent sessions in parallel creates multiple communication chann
 | PR comment | Review discussion | Persistent |
 | Record file | Lessons, patterns | Persistent (local) |
 
-Two principles. **Never seek a decision over an ephemeral channel** (it vanishes, and afterwards nobody can trace who decided what). **Never write short-lived status reports to a persistent channel** (they become noise). Also, chains of "received → thanks → you're welcome" are pure round-trip cost: outside of active coordination (requests, blockers, correction demands), the right signal is silence. The measured trigger was the lead's inbox accumulating **480 messages** — signals, status, and questions all mixed together.
+Two principles. **Never seek a decision over an ephemeral channel** (it vanishes, and afterwards nobody can trace who decided what). **Never write short-lived status reports to a persistent channel** (they become noise). Also, chains of "received → thanks → you're welcome" are pure round-trip cost: outside of active coordination (requests, blockers, correction demands), the right signal is silence. The measured trigger was the inbox of the lead (the coordinator who oversees multiple agent sessions) accumulating **480 messages** — signals, status, and questions all mixed together.
 
 ## 2. Never pin a contract on the hub — write it in an issue and point people at it
 
@@ -49,9 +49,9 @@ There are three ways to make an agent "wait for news," and their cost while wait
 | Fixed-interval self-wake (a timer wakes the agent periodically) | **Incurred on every wake** | Only when truly needed, at a sparse interval (60+ minutes) |
 | Event-driven (triggered by the other party's post or report) | 0 | Everything that can be structured around the other party reporting |
 
-A fixed interval is acceptable only when all three conditions hold: (1) no event-driven path exists; (2) the periodic check itself has operational value; (3) a sparse interval suffices. Measured anti-pattern: a 4-minute self-wake loop, whose LLM cost compounded to **7–10x**.
+Note that rows 1 and 3 of the table are alike in that both wake the agent only when something new arrives — think of row 1 as the standing mechanism that implements row 3 for the inbox. A fixed interval is acceptable only when all three conditions hold: (1) no event-driven path exists; (2) the periodic check itself has operational value; (3) a sparse interval suffices. Measured anti-pattern: a 4-minute self-wake loop, whose LLM cost compounded to **7–10x that of the event-driven watcher setup**.
 
-One stronger rule on top (a direct owner instruction): **while idle with no task, creating any self-triggering loop other than the inbox watcher is prohibited outright.** Waiting means the passive form — do nothing until an event wakes you; do not keep waking yourself with polling (checking at a fixed interval) or scheduled wakeups. Note that a mid-work "watch until CI finishes, then naturally stop" is not an idle loop — the prohibition targets self-restarting with no end.
+One stronger rule on top (a direct owner instruction): **while idle with no task, creating any self-triggering loop other than the inbox watcher is prohibited outright.** Waiting means the passive form — do nothing until an event wakes you; do not keep waking yourself with polling (checking at a fixed interval) or scheduled wakeups. Note that a mid-work "watch until CI (automated tests) finishes, then naturally stop" is not an idle loop — the prohibition targets self-restarting with no end.
 
 ## 4. Run long work in the background — don't block the conversation
 
@@ -76,12 +76,12 @@ Measured, twice in a row: the owner discovered a missed notification and worked 
 - [ ] Are you about to send a second "final version" of the same decision? Did you ratify the implementers' convergence?
 - [ ] Is the waiting setup event-driven? Are you planting a self-wake loop while idle?
 - [ ] Before choosing a fixed interval, did you confirm all three conditions (no event-driven path, operational value, sparse suffices)?
-- [ ] Are you blocking the conversation with a synchronous launch of long work? Are you following the pattern: background + commit first + measure with ps?
+- [ ] Are you blocking the conversation with a synchronous launch of long work? Are you following the pattern: background + commit first + measure with ps? And did the final run whose full output must be read go to a foreground with an explicit timeout?
 - [ ] Every post you wrote "I will notify" about — did you execute it in the same turn?
 
 ## Sources (measured during reyn development)
 
-Channel separation: 2026-05-27 owner instruction "also look into optimizing the inter-session communication paths" (triggered by the 480 mixed messages in the lead's inbox). Contract: #1135 (2026-05-31, version crossings of a data-format contract; owner: "why not write it in the issue and have them refer to that?"). Cost of waiting: 2026-05-27 owner instruction "polling only when truly necessary" (13-minute and 30-minute fixed cycles reorganized into a watcher process + sparse intervals; the measured 7–10x cost of the 4-minute self-wake loop) + the outright ban on idle loops (2026-06-25 owner instruction). Synchronous launch: 2026-06-25 (owner canceled work over the unresponsiveness of a synchronous launch) + during a long foreground run, hub messages don't get through and the session looks stalled (the lead's broadcast to everyone). Posting: 2026-05-28 PR #993 (first missed notification, surfaced by the owner's question) → same day, #995/#998 (second case, right after the lesson was recorded).
+Channel separation: 2026-05-27 owner instruction "also look into optimizing the inter-session communication paths" (triggered by the 480 mixed messages in the lead's inbox). Contract: #1135 (2026-05-31, version crossings of a data-format contract; owner: "why not write it in the issue and have them refer to that?"). Cost of waiting: 2026-05-27 owner instruction "polling only when truly necessary" (13-minute and 30-minute fixed cycles reorganized into a watcher process + sparse intervals; the measured 7–10x cost of the 4-minute self-wake loop) + the outright ban on idle loops (2026-06-25 owner instruction). Synchronous launch: 2026-06-25 (owner canceled work over the unresponsiveness of a synchronous launch) + during a long foreground run, hub messages don't get through and the session looks stalled (the lead's broadcast to everyone). Posting: 2026-05-28 PR #993 (first missed notification, surfaced by the owner's question) → same day, #995/#998 (a paired miss across one merge's cascade — the second case, right after the lesson was recorded).
 
 ## Related
 

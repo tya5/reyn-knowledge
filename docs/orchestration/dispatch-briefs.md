@@ -33,7 +33,7 @@ if not queue.full():
 
 At the altitude of "bounded queue," A and B are **identical**. The difference appears only one level down, in "what gets dropped" — and that is the level where accidents happen. Where you want subscribers to receive the latest (a cap that lets a lagging reader catch up), A is correct. But use A where the queue holds **the work that is supposed to run next**, and it silently drops the job that was about to run. Both are "legitimate bounded queues," so things break **while the tests stay green**.
 
-Measured case: a brief went out saying "copy the shape of the bounded queue in `bus.py`; do not invent a new design." `bus.py` was the wrong model (the issue ticket itself named the correct model, yet the dispatcher, having read the ticket, pointed at the wrong file). Copied as instructed, the result would have been "working, green, plausible" code that silently dropped the next job to run. It came to light because the implementing agent refused to copy.
+Measured case: a brief went out saying "copy the shape of the bounded queue in `bus.py`; do not invent a new design." `bus.py` was the wrong model (the issue ticket itself named the correct model, yet the dispatcher, having read the ticket, pointed at the wrong file). Copied as instructed, the result would have been "working, green, plausible" code that silently dropped the next job to run. It came to light because the implementing agent refused to copy (as described below, the brief happened to contain one defensive step — that is what made the refusal possible).
 
 A brief has three tiers of safety:
 
@@ -57,7 +57,7 @@ Measured case: after running roughly 15 PRs (change proposals) on implementation
 
 ## 3. Write verification duties as concrete actions — checking labels and checking content are different things
 
-A request to "verify that ..." gets satisfied by the **cheapest check** the receiver can find. Two measured cases (separate subagents — child agents spawned for auxiliary work — sharing the same review):
+A request to "verify that ..." gets satisfied by the **cheapest check** the receiver can find. Two measured cases (the same review was split across several subagents — child agents spawned for auxiliary work — and these happened on two of them, the A and D of the Sources):
 
 - (a) "Verify there are no violations of the test-grade notation" → the subagent looked only at the **labels** in docstrings (the descriptive text attached to a function), never at the content of the asserts (a test's check statements), and reported "no violations" → CI detected 6. Check statements like `assert len(result) == 3`, which pin down the output format, had been left in.
 - (b) "Verify which domain this function belongs to" → the subagent **inferred from the test's directory name** (under tests/chat/, therefore the chat domain), did not read the content, and reported "no impact on other domains" → it was in fact touching another domain's data, and the change had to be reverted wholesale.
@@ -68,8 +68,8 @@ It is easy to call both of these receiver laziness, but the side that can preven
 ## Verification duties (a template to paste into a brief)
 1. Do not stop at checking labels (docstring notation, etc.)
 2. Enumerate the check statements themselves, directly, with grep:
-   grep -n "assert len(" tests/
-   grep -n 'assert.*==.*"' tests/      # comparisons against fixed strings
+   grep -rn "assert len(" tests/
+   grep -rn 'assert.*==.*"' tests/     # comparisons against fixed strings
 3. Read the target function's body directly and follow the chain of imports and calls
 4. Surface inference of the form "the directory is X-ish, so it is the X domain" is forbidden
 5. Include the primary evidence you used (grep output, names of the functions you read) in your report
@@ -79,11 +79,11 @@ This is the dispatcher-side counterpart of [Audits Must Match Content](../verifi
 
 ## 4. Write GO as a "decision" — recommendations get waited on
 
-Suppose a counterpart working plan-first (a policy of not starting implementation until approval is given) sends a question asking for your ruling. If you reply — meaning it as final — "(2) is KEEP, **recommended**," the counterpart **correctly waits**: a "recommendation" is a leaning (the decision is still theirs to make), not a settled ruling, so the more disciplined the counterpart, the less it will start.
+Suppose a counterpart working plan-first (a policy of not starting implementation until approval is given) sends a question asking for your ruling. If you reply — meaning it as final — "(2) is KEEP (leave as is), **recommended**," the counterpart **correctly waits**: a "recommendation" is a leaning (the decision is still theirs to make), not a settled ruling, so the more disciplined the counterpart, the less it will start.
 
 Measured case: the silence created by this ambiguity was misdiagnosed by the dispatcher as a stall, and the status-check ping — the message finally rewritten in assertive language — became the de facto permission to start. **The waiting side's discipline was correct; the ambiguity was on the dispatching side.**
 
-- When issuing a final ruling, say in words that it is a decision: "**GO — settled on X** (a decision, not a recommendation)."
+- When issuing a final ruling, say in words that it is a decision: "**GO — settled on X** (a decision, not a recommendation)" (GO = the settled signal of permission to start).
 - Reserve "recommended / on balance" for when you genuinely want the counterpart to decide.
 - If a counterpart you believe you gave a GO falls silent, **reread your own outgoing message** before suspecting a stall (was the phrasing soft?). The counterpart of [Detecting Stalled Agents](stall-detection.md) §5.
 
@@ -105,4 +105,4 @@ Invariant: #2620 (2026-07-16, the bus.py misnaming — the analysis by the imple
 - [Operating with Separate Coder / Tester / Reviewer Agents](../verification/roles.md) — the full picture of each role's obligations (this document is its dispatcher-side casebook)
 - [Audits Must Match Content](../verification/audit-content-match.md) — the general form of label/content divergence
 - [Detecting Stalled Agents](stall-detection.md) — the false stalls that soft GOs create
-- [Completeness Sweeps in Practice](../verification/completeness-sweeps.md) — exhaustive checks for documentation gaps
+- [Completeness Sweeps in Practice](../verification/completeness-sweeps.md) — techniques for enumerating a class and closing it exhaustively (applicable to documentation checks as well)

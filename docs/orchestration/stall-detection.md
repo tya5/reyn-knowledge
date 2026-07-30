@@ -28,29 +28,37 @@ When you run multiple agent sessions concurrently (a fleet), the central operati
 2. In that agent's worktree, uncommitted diffs are **present**, and new commits are **absent**
 3. In the process table (`ps`), the test process it is supposedly waiting on is **absent**
 
-If all three line up, a dead-job stall is confirmed. **If even one process is still alive, the run is legitimately in progress** — do not rush the agent (in a measured case, not rushing the one-process-alive case turned out to be correct).
+If all three line up, a dead-job stall is confirmed. **If even one of the test processes it is supposedly waiting on is still alive, the run is legitimately in progress** — do not rush the agent (in a measured case, not rushing the one-process-alive case turned out to be correct).
 
-> **"The notification hasn't arrived" is not evidence of "it's still running."** The notification is an event on the producer's side; if the producer dies, the notification dies with it (the operational version of [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md)).
+```bash
+# Example of the three-point measurement (<agent> = the agent, <worktree> = its working tree)
+gh pr list --author <agent>            # 1. is the work absent from the open PRs?
+git -C <worktree> status --porcelain   # 2. uncommitted diffs present?
+git -C <worktree> log --oneline -3     #    any new commits?
+ps aux | grep pytest                   # 3. is the awaited process alive?
+```
+
+> **"The notification hasn't arrived" is not evidence of "it's still running."** The notification is an event on the side of the producer (the process that generates the notification); if the producer dies, the notification dies with it (the operational version of [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md)).
 > Addendum: **CPU usage is not a liveness indicator for the agent itself** (most of its time is spent waiting for LLM responses, using almost no CPU). Watch the agent via its declarations, pushes, and messages — and watch **its child processes via ps**. They are separate indicators.
 
-**The root cause was often an instruction that was impossible to execute.** Writing "run the tests in the foreground" into every brief did not stop the stalls, and here is why: the full suite's runtime **exceeded the shell's default execution timeout**, so running it as instructed was always cut off — the agent had no option but to escape into the background. ∴ Prevention is a three-item set written into the brief:
+**The root cause was often an instruction that was impossible to execute.** Writing "run the tests in the foreground" into every brief did not stop the stalls, and here is why: the full suite's runtime **exceeded the shell's default execution timeout**, so running it as instructed was always cut off — the agent had no option but to escape into the background. Therefore, prevention is a three-item set written into the brief:
 
 1. Foreground execution **with an explicit timeout** (tell the agent that under the default value, finishing is physically impossible)
 2. **Commit the work before running the suite** (commit-first) — then even if the agent stalls, the work is recoverable, which demotes the stall from a "catastrophe" to "an event resolved with a single nudge"
 3. **Do not end the turn; read the entire output** (ending the turn with the job in the background means "nobody is left to read it" — in a measured case, an agent that re-read the run in the foreground discovered two real failures. Had it stayed in the background, both would have shipped)
 
-Note the measured coda: **the very person who recorded this prevention forgot, nine days later, to put two of these items (the explicit-timeout foreground run and the commit-before-suite) into a brief and reproduced the same stall three times** — "having recorded the countermeasure" and "applying the countermeasure" are different actions (the dispatch-side instance of principle 4 in [Measuring the Wrong Target](../verification/measurement-target.md)).
+Note the measured coda: **the very person who recorded this prevention forgot, ten days later, to put two of these items (the explicit-timeout foreground run and the commit-before-suite) into a brief and reproduced the same stall three times** — "having recorded the countermeasure" and "applying the countermeasure" are different actions (the dispatch-side instance of cross-cutting principle 4, "procedure, not attention," in [The System of Verification Knowledge](../verification/index.md)).
 
 ## 2. Cross-check "currently running" self-reports against the known duration
 
-An agent's self-report of "it's running right now" is to be believed only after checking it against **the known duration of that task**. Measured: a suite that normally takes 3–4 minutes had been "running" for **44 minutes** — that is not "slow," it is a **hang** (it was in fact a bug that waited forever during shutdown handling). The relayer confirmed only that the run was **alive**, never that it was **progressing**, and reported to the owner "it's running, so it's on track."
+An agent's self-report of "it's running right now" is to be believed only after checking it against **the known duration of that task**. Measured: a suite that normally took 3–4 minutes (the known value at the time) had been "running" for **44 minutes** — that is not "slow," it is a **hang** (it was in fact a bug that waited forever during shutdown handling). Note that the normal value itself drifts over time (a record of the same suite at another point puts it at about 4.5 minutes) — cross-check by **ratio**, not by absolute value. The relayer confirmed only that the run was **alive**, never that it was **progressing**, and reported to the owner "it's running, so it's on track."
 
 - A still-running that exceeds the known duration by **several times to 10x** is to be treated as hung, not slow ([Liveness of the Verification Run Itself](../verification/verification-run-liveness.md) is the same discipline on the run's side).
 - Do **not relay "running, therefore fine" as is**.
 
 ## 3. Attributing silence — what to suspect before "stuck"
 
-- **Waiting on compaction**: on some model tiers, sessions stop at a compaction boundary and do not resume automatically. When a long autonomous job goes silent, **suspect a compaction wait first**, before hypothesizing that the code is stuck (the signature: active on the hub, zero output, large work size). Measured: 10 hours of silence were misattributed to "stuck on the implementation." Prevention: **cut dispatches to a granularity that does not straddle compaction boundaries** (one PR per axis rather than one multi-axis PR).
+- **Waiting on compaction**: on some model tiers, sessions stop at a compaction boundary and do not resume automatically. When a long autonomous job goes silent, **suspect a compaction wait first**, before hypothesizing that the code is stuck (the typical combination: shown as active on the message hub — the inter-session message relay — zero output, large work size). Measured: 10 hours of silence were misattributed to "stuck on the implementation." Prevention: **cut dispatches to a granularity that does not straddle compaction boundaries** (one PR per axis rather than one multi-axis PR).
 - **Quiet work without pushes**: when a session that was pushing actively until moments ago goes silent, the first hypothesis is "**absorbed in work without pushing**," not "dead" — measured: a peer whose 25 minutes of silence nearly got escalated as a suspected restart was in fact busy finding and fixing a race bug. Send a nudge (a light check-in) first, and give it time to reply.
 - **The invisibility of local-only commits**: measured case where the peer had kept implementing in roughly 20-minute increments, but the commits stayed local and unpushed, so from the outside it looked like "42 minutes of silence." Prevention is not detection but **a request made at dispatch time**: "incremental push at every milestone plus a one-line status," "open a draft PR early for heavy work" — this makes the false-stall misreading itself disappear.
 
@@ -63,12 +71,12 @@ Operational points (all from measurement):
 - **Both edges are required**: an idle declaration on stop alone is a one-way trap — "said idle once, looks idle forever." Pair it with an active declaration at the start of work (in the turn-start hook).
 - **Machine axis and semantic axis in separate fields**: if the machine declaration (active: bool) and the LLM-written semantic status string ("waiting on CI," etc.) ride in one field, one overwrites the other. The bool is the deterministic authority; the string is an optional hint.
 - **A repeated identical status string is a staleness signal, not evidence of activity** (status strings do not auto-update — a disconnected session keeps displaying its last words). After seeing the same string a few times, **check the active flag directly**. Measured: dozens of idle events were suppressed on the grounds of an identical string; a direct check showed active=false.
-- **Escalation-for-verification is not the forbidden inference**: the watcher detects idle mechanically and escalates to the lead, and **the lead verifies** (deciding "done vs stalled" is the job of the party escalated to). Do not conflate "the watcher must not declare a stall" with "the watcher must not escalate candidates."
+- **Escalation-for-verification is not the forbidden inference**: the watcher detects idle mechanically and escalates to the lead, and **the lead verifies** (deciding "done vs stalled" is the job of the party escalated to — the three-point measurement of §1 is exactly the procedure the lead runs at this verify step). Do not conflate "the watcher must not declare a stall" with "the watcher must not escalate candidates."
 - **A "fire only when everyone is idle" gate misses an individual session's mid-work idle** (measured: a session that pushed only 1 of 5 stages and then disconnected went unnoticed for 70 minutes). If the stop-time declaration says "mid-work (WIP continuing)," alert on it even alone; "waiting on a dependency (idle waiting for X)" is legitimate and suppressed — have the declaration text distinguish these two.
 
 ## 5. Do not assume dispatch = motion — fan-out and fan-in are a pair
 
-"I sent the request, therefore it's moving" is an assumption. Measured: a silent stall after a dispatch ack kept being reported as "presumably implementing," and the owner was forced into the role of stall detector three times.
+Fan-out (distributing requests to several peers) and fan-in (collecting and confirming their results) are a pair — a dispatch is not finished until it is collected. "I sent the request, therefore it's moving" is merely an assumption. Measured: a silent stall after a dispatch ack (acknowledgment of receipt) kept being reported as "presumably implementing," and the owner was forced into the role of stall detector three to four times within a single session.
 
 - Right after a dispatch, **confirm pickup (a signal of starting the work)**. An ack alone does not mean "moving."
 - After a stretch of silence, **measure the PR / the remote branch / the last-activity time yourself** before reporting status. Write the report not as "presumably implementing" but as a verified fact: "**last activity HH:MM, no PR yet = progress unverified**."
@@ -81,15 +89,15 @@ Operational points (all from measurement):
 - [ ] Did the brief include "foreground with an explicit timeout," "commit before the suite," and "don't end the turn; read the entire output"?
 - [ ] Did you cross-check the "currently running" self-report against the known duration?
 - [ ] Attribution of silence: did you consider a compaction wait, work without pushes, and local-only commits before "stuck in the code"?
-- [ ] Did you judge the stall by machine declaration (the active flag), not by inference? Are you treating a repeated status string as evidence?
+- [ ] Did you judge the stall by machine declaration (the active flag), not by inference — and avoid treating a repeated status string as evidence?
 - [ ] Did you run the post-dispatch fan-in (pickup confirmation, periodic measurement, reports as verified facts)?
 
 ## Sources (measured during reyn development)
 
-Dead-job waits: six in one night (P5 plus #3083 #3086 #3090 #3091 #3093, six occurrences in total) → identification of the impossible instruction → three recurrences nine days later from the same omission in the brief (2026-07-28), and two real failures discovered by re-reading in the foreground. Duration cross-check: #2259 PR-2a (a 44-minute hang relayed as "running, so on track"). Compaction wait: #1495 (10 hours of silence misattributed to a stuck implementation; the owner pointed it out). Quiet work: 2026-06-28 (25 minutes of silence → actually fixing a race bug). Local-only commits: 2026-06-02 (a 42-minute false stall). Machine declarations: owner directive of 2026-06-03 (the declaration as single source of truth, both edges, separate fields); #2840/#2846 (active=false missed because of a repeated status string); 2026-06-13/14 (the two blind spots in the escalation design). Fan-in: 2026-05-31 through 06-02 (the same shape three to five times; the owner became the detector); #2296 (a false stall caused by a soft GO).
+Dead-job waits: six in one night (internal work label P5 plus #3083 #3086 #3090 #3091 #3093, six occurrences in total) → identification of the impossible instruction → three recurrences ten days later from the same omission in the brief (2026-07-28), and two real failures discovered by re-reading in the foreground. Duration cross-check: #2259 PR-2a (a 44-minute hang relayed as "running, so on track"). Compaction wait: #1495 (10 hours of silence misattributed to a stuck implementation; the owner pointed it out). Quiet work: 2026-06-28 (25 minutes of silence → actually fixing a race bug). Local-only commits: 2026-06-02 (a 42-minute false stall). Machine declarations: owner directive of 2026-06-03 (the declaration as single source of truth, both edges, separate fields); #2840/#2846 (active=false missed because of a repeated status string); 2026-06-13/14 (the two blind spots in the escalation design). Fan-in: 2026-05-31 through 06-02 (the same shape three to four times within one session; the owner became the detector); #2296 (a false stall caused by a soft GO).
 
 ## Related
 
 - [Liveness of the Verification Run Itself](../verification/verification-run-liveness.md) — "slow" vs "stalled" on the run's side
-- [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md) — the general form of "no notification ≠ still running"
+- [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md) — the principle of judging liveness by facts on the producer's side, not the observer's records (its context is verifying deleted code, but the principle is the same shape)
 - [Operating with Separate Coder / Tester / Reviewer Agents](../verification/roles.md) — the full picture of the dispatch side's obligations

@@ -17,9 +17,9 @@ Two structures cut across everything here:
 
 | Document | In one line |
 |---|---|
-| [Detecting Stalled Agents](stall-detection.md) | Silence is ambiguous. The three-point measurement for the most frequent stall shape (waiting on a dead background job), cross-checking against known durations, separating machine declarations from inference, fan-out/fan-in as a pair |
+| [Detecting Stalled Agents](stall-detection.md) | Silence is ambiguous. The three-point measurement for the most frequent stall shape (waiting on a dead background job), cross-checking against known durations, separating machine declarations from inference, fan-out/fan-in (distributing requests and collecting results) as a pair |
 | [Verifying Before You Relay](relay-verification.md) | Claims that cross a hub are hearsay. Verify infrastructure state directly at minimal cost; carry a claim together with the command that was run and its scope; numbers only as copied output; rule out confounders |
-| [The Discipline of Dispatch Briefs](dispatch-briefs.md) | Name the invariant instead of "copy X"; user-visible changes require documentation; state verification obligations as concrete behaviors of the content; write GO as a decision |
+| [The Discipline of Dispatch Briefs](dispatch-briefs.md) | Name the invariant instead of "copy X"; user-visible changes require documentation; state verification obligations as concrete behaviors of the content; write GO (permission to start) as a decision |
 | [The Discipline of Autonomous Operation](autonomous-operation.md) | Don't ask blocking questions; reject the fatigue reflex with numbers; full-count review before idling; never fabricate work; re-read the original goal; don't stop right after dispatching |
 | [Communication Channels and the Cost of Waiting](channels-and-cost.md) | Separate channels by purpose; pin contracts in issues; wait event-driven; run long work in the background; if you wrote "I will post it," post it in the same turn |
 
@@ -29,4 +29,4 @@ If you are about to build a fleet: [The Discipline of Dispatch Briefs](dispatch-
 
 ## Relationship to Tier 1 and Tier 2
 
-Each Tier 3 document is the "operational version" of a Tier 1 verification principle: the three-point measurement of stall detection applies [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md), relay verification applies [Claims Without Context](../verification/cross-context-claims.md), and the verification obligations in dispatch briefs apply [Audits Must Match Content](../verification/audit-content-match.md) — each carried into the multi-agent setting. For the full picture of per-role obligations, see [Operating with Separate Coder / Tester / Reviewer Agents](../verification/roles.md).
+Most Tier 3 documents are the "operational version" of a Tier 1 verification principle: the three-point measurement of stall detection applies [Liveness Is Decided by the Producer](../verification/liveness-is-producer.md), relay verification applies [Claims Without Context](../verification/cross-context-claims.md), the verification obligations in dispatch briefs apply [Audits Must Match Content](../verification/audit-content-match.md), and the "recording and applying are different actions" of autonomous operation applies cross-cutting principle 4 ("procedure, not attention") of [The System of Verification Knowledge](../verification/index.md) — each carried into the multi-agent setting. For the full picture of per-role obligations, see [Operating with Separate Coder / Tester / Reviewer Agents](../verification/roles.md).

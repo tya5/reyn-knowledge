@@ -17,9 +17,9 @@ tags: [orchestration, index, overview]
 
 | ドキュメント | 一言で |
 |---|---|
-| [止まっているエージェントの見つけ方](stall-detection.ja.md) | 沈黙は多義。最頻の停止形(死んだ背景ジョブ待ち)の3点測定・既知所要時間との照合・機械申告と推論の分離・fan-out/fan-in の対 |
-| [中継の検証](relay-verification.ja.md) | ハブ越しの主張は伝聞。インフラ状態は最安の直接検証・claim は実行したコマンドと範囲ごと運ぶ・数値は出力コピーのみ・交絡の除外 |
-| [依頼文の規律](dispatch-briefs.ja.md) | 「X を写せ」でなく不変条件を名指す・利用者に見える変更にはドキュメント必須・検証義務は中身の具体動作で・GO は決定として書く |
+| [止まっているエージェントの見つけ方](stall-detection.ja.md) | 沈黙は多義。最頻の停止形(死んだ背景ジョブ待ち)の3点測定・既知所要時間との照合・機械申告と推論の分離・fan-out/fan-in(依頼の配布と回収)の対 |
+| [中継の検証](relay-verification.ja.md) | ハブ越しの主張は伝聞。インフラ状態は最安の直接検証・claim(主張)は実行したコマンドと範囲ごと運ぶ・数値は出力コピーのみ・交絡の除外 |
+| [依頼文の規律](dispatch-briefs.ja.md) | 「X を写せ」でなく不変条件を名指す・利用者に見える変更にはドキュメント必須・検証義務は中身の具体動作で・GO(着手許可)は決定として書く |
 | [自走の規律](autonomous-operation.ja.md) | 塞ぐ質問をしない・疲労反射は数値で棄却・待機前の全数見直し・作業を捏造しない・原本ゴールの再読・依頼直後に止まらない |
 | [通信経路と待機コスト](channels-and-cost.ja.md) | 経路は用途で分ける・契約は issue に固定・待機はイベント駆動・長い作業は背景で・「投函する」と書いたら同ターンで投函 |
 
@@ -29,4 +29,4 @@ tags: [orchestration, index, overview]
 
 ## Tier 1・Tier 2 との関係
 
-Tier 3 の各文書は、Tier 1 の検証原理の「運用版」である: 停止検知の3点測定は[生死は producer で判定する](../verification/liveness-is-producer.ja.md)の、中継の検証は[文脈を持たない主張](../verification/cross-context-claims.ja.md)の、依頼文の検証義務は[監査は内容を照合する](../verification/audit-content-match.ja.md)の、それぞれ多エージェント環境への適用にあたる。役割ごとの義務の全体像は[役割分離運用の実務](../verification/roles.ja.md)。
+Tier 3 の文書の多くは、Tier 1 の検証原理の「運用版」である: 停止検知の3点測定は[生死は producer で判定する](../verification/liveness-is-producer.ja.md)の、中継の検証は[文脈を持たない主張](../verification/cross-context-claims.ja.md)の、依頼文の検証義務は[監査は内容を照合する](../verification/audit-content-match.ja.md)の、自走の規律の「記録と適用は別の動作」は[検証ナレッジの体系](../verification/index.ja.md)の横断原理4「注意力ではなく手順」の、それぞれ多エージェント環境への適用にあたる。役割ごとの義務の全体像は[役割分離運用の実務](../verification/roles.ja.md)。
