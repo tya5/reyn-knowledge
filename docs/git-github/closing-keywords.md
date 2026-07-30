@@ -51,7 +51,7 @@ Why shape 1 happens so easily: many repositories have a house style of "wrap ide
 
 - After opening a PR: `gh pr view <PR> --json closingIssuesReferences` — check both that what should close **is included** and that what must not close **is not included**.
 - After merging: look at the target issue's actual `state`. **The pre-merge check is necessary but not sufficient** (shape 4's commit-message path slips past body inspection).
-- Don't read meaning into a close event's `commit_id` / `actor` fields — measured: keyword-driven and manual closes both show `commit_id=null` with the same actor, so **null distinguishes nothing**. A **non-null commit_id, however, is the mark of the commit-message path**.
+- Don't read meaning into a close event's `commit_id` / `actor` fields — measured: PR-body keyword-driven and manual closes both show `commit_id=null` with the same actor, so **null distinguishes nothing** (inspect via `gh api repos/<owner>/<repo>/issues/<N>/timeline`). A **non-null commit_id, however, is the mark of the commit-message path**.
 
 ## "Will it close" and "should it close" are separate questions
 

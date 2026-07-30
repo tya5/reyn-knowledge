@@ -4,6 +4,7 @@ description: Worktrees separate the filesystem but not git state (stash, refs, t
 tags: [git-github, git, multi-agent]
 sources:
   - feedback_parallel_coders_shared_central_file_hazard
+  - feedback_line_numbers_are_not_identifiers_across_a_moving_main
   - feedback_same_role_concurrent_session_branch_divergence
   - feedback_explicit_git_add_not_blanket_in_artifact_heavy_session
   - feedback_verify_pushed_tree_matches_working_tree_before_pr
@@ -21,7 +22,7 @@ When multiple coding agents run concurrently in the same repository, the standar
 
 ## 1. Before fan-out, look for the shared central file
 
-Parallelization is right when each unit touches **mutually disjoint files**. In an observed case where work was fanned out three-wide with every unit editing the same central file (a registry, a ledger, an enum, a dispatch table), all it produced was (1) merge conflicts in that one file and (2) **repository-wide stash cross-contamination** the moment someone used `git stash`.
+Parallelization is right when each unit touches **mutually disjoint files**. In an observed case where work was fanned out three-wide with every unit editing the same central file (a registry, a ledger, an enum, a dispatch table), all it produced was (1) merge conflicts in that one file and (2) **cross-worktree stash contamination** the moment someone used `git stash`.
 
 - Before fan-out: **check whether the units edit the same central file**. If they do, choose one of: (a) serialize (A merges → B rebases → ...), (b) **one owner for the central file** (everyone else touches only the leaves), (c) a structure that touches the central file exactly once.
 - In every configuration, **merge serially** (a chain of rebases) — so that each edit to the central file lands on top of the previous result.
@@ -40,7 +41,7 @@ A related restoration trap: after stripping a single line for verification, **do
 The **first** `git checkout -b` of an agent that had been assigned a worktree ran not in the worktree but in **the shared primary checkout** (the main working tree other sessions read) — observed for two consecutive agents. Even when the instructions say "work in the worktree," **the first command can fire before the agent has oriented itself**.
 
 - Put it in the brief: "**before your first git command, run `git rev-parse --show-toplevel` and confirm it is the worktree path**."
-- Trust-but-verify on the dispatcher's side: **check the shared checkout's `git status` after each agent completes its work** (the two observed cases were caught this way).
+- In the two observed cases the implementing agents themselves noticed and recovered before committing; on top of that, the dispatcher's **`git status` check of the shared checkout after each agent finished** independently confirmed both were clean — trust-but-verify.
 
 ## 4. Concurrent sessions under the same role name — a push reject is primary evidence
 
@@ -60,11 +61,11 @@ The commit stage holds **two traps pointing in opposite directions**; guarding a
 ∴ The unifying rule is not an "add style" but **verification after the fact**:
 
 ```bash
-git status --porcelain          # empty = working tree matches HEAD (guarantee that tests measured the pushed state)
+git status --porcelain          # empty = working tree matches HEAD (guarantee that tests measured what will be pushed)
 git ls-tree -r HEAD --name-only | grep <new-file>       # the new artifact made it into the tree
 git show HEAD:<file> | grep <new-symbol>                # the wiring made it into the commit
 git diff --stat origin/main...HEAD                      # matches the expected file set
-gh pr view <N> --json changedFiles                      # the authority after push (local comparison misleads when the tree is stale)
+gh pr view <N> --json files                             # the authority after push: the list of changed file names (changedFiles is only a count)
 ```
 
 In artifact-heavy sessions, use explicit adds (plus a `git diff --cached --name-only` cross-check), and delete verification backups (`.bak` and the like) at the end of the session.
@@ -82,12 +83,12 @@ Renaming a package or module changes **the alphabetical position** of import sta
 - [ ] Not using stash? Not using `git checkout <file>` to restore after a strip?
 - [ ] (In the brief) worktree check before the first git command? (On the receiving side) checked the shared checkout's status?
 - [ ] Not answering a push reject with force? Read the other side's commits and converged?
-- [ ] After committing: verified the tree via empty porcelain, ls-tree, show, diff --stat, changedFiles?
+- [ ] After committing: verified the tree via empty porcelain, ls-tree, show, diff --stat, and the PR's file list?
 - [ ] After a rename: ran the full-scope linter on the rebased HEAD?
 
 ## Sources (measured during reyn development)
 
-Central-file fan-out and stash contamination: the #2681 arc (three-wide conflicts plus refs/stash clobber) and #3213 (a pop after an empty stash unpacked someone else's WIP). First command in the shared checkout: the 0061 arc (two consecutive agents, self-caught before committing). Same-role concurrency: #2838 (the HOLD went to the other session; detected via the reject and converged). Sweep-in: #1502 (46 files +8019 lines, reconstructed via `git reset --soft`). Drop-out: a partial commit from a pathspec abort (caught by the reviewer's pre-read). I001: #1685/#1687 (two on the same day).
+Central-file fan-out and stash contamination: the #2681 arc (three-wide conflicts plus refs/stash clobber) and the empty-stash pop that unpacked someone else's WIP (2026-07-28; the reference number inside the source pin is an internal work-item id, not a GitHub issue). First command in the shared checkout: the 0061 arc (two consecutive agents, self-caught before committing). Same-role concurrency: #2838 (the HOLD went to the other session; detected via the reject and converged). Sweep-in: #1502 (46 files +8019 lines, reconstructed via `git reset --soft`). Drop-out: a partial commit from a pathspec abort (caught by the reviewer's pre-read). I001: #1685/#1687 (two on the same day).
 
 ## Related
 

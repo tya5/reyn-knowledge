@@ -7,6 +7,8 @@ description: Full closing-keyword inspection before opening a PR, before merging
 
 **When to use**: when opening a PR that mentions an issue number / when writing `Closes #N` in a dispatch brief / when merging.
 
+Premise: `Closes #N` / `Fixes #N` is GitHub notation that automatically closes issue #N the moment the PR merges.
+
 ## Step 1 — Surface-text scan (both the body and the commit messages)
 
 ```bash
@@ -36,7 +38,7 @@ gh pr view <PR> --json closingIssuesReferences
 gh pr list --state all --search "<N> in:body"
 ```
 
-- Write `Closes #N` only when there are **zero open PRs** carrying `part of #N`. If any remain, use `part of #N`.
+- Write `Closes #N` only when there are **zero open PRs mentioning #N** (the command returns all states — count the open ones). If any remain, use `part of #N`.
 - Reason: the fact of closing itself hides the existence of remaining work (closed issues vanish from inventory passes).
 
 ## Step 4 — The semantic judgment of whether to close (the one point that can't be mechanized)
@@ -51,7 +53,7 @@ gh issue view <N> --json state   # for each issue mentioned
 ```
 
 - Look in **both directions**: did what should close become closed, and did what must not close stay open?
-- If there is an unexpected close: a **non-null** `commit_id` on the timeline means the commit-message path was the cause. Reopen, and record the cause (the commit SHA) on the issue.
+- If there is an unexpected close, inspect `gh api repos/<owner>/<repo>/issues/<N>/timeline`: a **non-null** `commit_id` on the close event means the commit-message path was the cause. Reopen, and record the cause (the commit SHA) on the issue.
 
 ## Background
 

@@ -7,6 +7,8 @@ description: PR を開く前・マージする前・マージした後の closin
 
 **使いどき**: issue 番号に言及する PR を開くとき / `Closes #N` を依頼文に書くとき / マージするとき。
 
+前提: `Closes #N` / `Fixes #N` は、PR のマージと同時に issue #N を自動クローズする GitHub の記法である。
+
 ## Step 1 — 字面スキャン(本文と commit メッセージの両方)
 
 ```bash
@@ -18,7 +20,7 @@ description: PR を開く前・マージする前・マージした後の closin
 各ヒットを判定する:
 
 - **閉じる意図の行**: バッククォートの**外**にあるか(中にあると閉じない)。
-- **閉じる意図の無い行**: 否定文(「does NOT close #N」)・説明文・所有格の偶然(`fix #N's ...`)でも**発火する**。キーワードを使わない言い換えに書き直す(「#N はこの PR の後も open のまま」)。**squash マージは commit メッセージを連結する**ので、本文だけ直しても足りない。
+- **閉じる意図の無い行**: 否定文(「does NOT close #N」)・説明文・所有格の偶然(`fix #N's ...`)でも**発火する**。キーワードを使わない言い換えに書き直す(「#N はこの PR の後も open のまま」)。**squash マージ(複数 commit を1つに畳むマージ)は commit メッセージを連結する**ので、本文だけ直しても足りない。
 
 ## Step 2 — parser の出力で両方向を確認
 
@@ -36,7 +38,7 @@ gh pr view <PR> --json closingIssuesReferences
 gh pr list --state all --search "<N> in:body"
 ```
 
-- `part of #N` を持つ **open の PR がゼロ**のときだけ `Closes #N`。残っていれば `part of #N` にする。
+- **#N に言及する open の PR がゼロ**のときだけ `Closes #N`(コマンドは全状態を返すので、その中の open を数える)。残っていれば `part of #N` にする。
 - 理由: 閉じた事実そのものが残件の存在を隠す(closed issue は棚卸しから消える)。
 
 ## Step 4 — 閉じるべきかの意味判断(機械化できない一点)
@@ -51,7 +53,7 @@ gh issue view <N> --json state   # 言及した各 issue について
 ```
 
 - 閉じるべきものが closed になったか、閉じてはいけないものが open のままか、**両方向**を見る。
-- 予期しないクローズがあれば、timeline の `commit_id` が**非 null** なら commit メッセージ経路が原因。reopen し、原因(commit SHA)を issue に記録する。
+- 予期しないクローズの原因調査は `gh api repos/<owner>/<repo>/issues/<N>/timeline` — close イベントの `commit_id` が**非 null** なら commit メッセージ経路が原因。reopen し、原因(commit SHA)を issue に記録する。
 
 ## 背景
 

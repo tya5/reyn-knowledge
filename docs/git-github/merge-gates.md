@@ -21,9 +21,9 @@ This is the git edition of "observations don't name their referents" from [Readi
 
 ## 1. String-matching hooks lie about "merged"
 
-In a setup where automation (a hook) watching command execution reacts to **the string** `gh pr merge` by announcing "PR #N merged," **the notification fires even when the merge fails**. Measured three times: a PR still in draft (failed with "still a draft"), a shell syntax error aborting the command, and a rejection because the branch was behind — in every case the hook claimed "merged," and relaying that to a person would have been misinformation.
+In a setup where automation (a hook) watching command execution reacts to **the string** `gh pr merge` by announcing "PR #N merged," **the notification fires even when the merge fails**. Measured in two distinct incidents: a PR still in draft (not merged, yet the hook announced "merged" three times) and a merge that failed because the branch was behind (BEHIND) while the hook still fired. The source pin further enumerates that a shell syntax error aborting the command, or a conflict, fire the hook just the same — **the hook cannot tell any failure from success**. Relaying it to a person turns it into misinformation.
 
-- Don't send a conditional merge (`if [green]; then gh pr merge; fi`) and a "merged ✅" report **in parallel within the same turn**. Keep the order: run the merge → confirm state → report. If they absolutely must coincide, use **incomplete phrasing**: "will merge as soon as it's green (not yet done)."
+- Don't send a conditional merge (pseudo-code: `if CI green → gh pr merge`) and a "merged ✅" report **in parallel within the same turn** (a turn = one agent response). Keep the order: run the merge → confirm state → report. If they absolutely must coincide, use **incomplete phrasing**: "will merge as soon as it's green (not yet done)."
 - Run other people's "everything is merged" reports through the same gate: confirm `state==MERGED` yourself before propagating hearsay (observed: a PR that had stayed open was mixed into an "all complete" report).
 
 ## 2. Under strict branch protection, merge failure becomes the normal state
@@ -40,7 +40,7 @@ Worst observed case: the owner rejected the PR's approach, so it was closed with
 
 - **The moment a merge decision reverses (rejection, hold, changes required), kill the poller before closing.**
 - Guard the poller itself: re-confirm `state==OPEN` immediately before merging.
-- If a race is suspected, the forensic check is `mergedAt > closedAt` (merged after being closed = the poller won). Revert immediately.
+- If a race is suspected, check after the fact whether `mergedAt > closedAt` (merged after being closed = the poller won). Revert immediately.
 
 ## 4. Put leftovers on the surface the gate reads
 
@@ -49,7 +49,7 @@ Observed: a conditional pass — "CLEAR, but fix one thing" — was received, th
 > **An automated gate sees only the surface it reads. "CLEAR but one thing" is conditional in human memory; to the machine, it is CLEAR.**
 
 - **Turn the leftover into machine-readable state before arming the poller.** Reverse the order and you get exactly this accident.
-- Where to put it depends on the environment. Measured: because every agent authenticates as the same GitHub user, **a change request (the official blocking mechanism) could not be used on one's own PR**; only two things actually worked: **leaving an unchecked `- [ ]` in the PR body's Test plan** (author side) and **flipping the PR back to draft** (`gh pr ready --undo` — the only machine-readable block a reviewer can apply unilaterally; it makes the PR unmergeable even when `mergeStateStatus` is CLEAN).
+- Where to put it depends on the environment. GitHub does not allow a PR's author to file a change request on their own PR — so in a setup where every agent authenticates as the same GitHub user, **every PR counts as "your own" and the official blocking mechanism is structurally unavailable** (measured). Only two things actually worked: **leaving an unchecked `- [ ]` in the PR body's Test plan** (author side; a surface read by *human* merge judgment — pollers don't read it) and **flipping the PR back to draft** (`gh pr ready --undo` — the *machine-readable* surface, and the only block a reviewer can apply unilaterally; it makes the PR unmergeable even when `mergeStateStatus` is CLEAN).
 - When a single poller cycles over multiple PRs, **take the conditional PR out of the loop**.
 
 ## 5. Signature conflicts between concurrent PRs — main breaks while each stays green

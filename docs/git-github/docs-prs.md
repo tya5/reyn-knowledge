@@ -17,7 +17,7 @@ sources:
 
 In a repository with **tests that parse documentation content and assert on it** (implementation↔doc mirror tests), editing an `.md` file is directly a change to a test's input. Measured: on a PR that removed lines from a feature-list doc, there existed a test calling `parse_feature_map()` and asserting on the count and structure (it passed — a fact known only because the tests were **run rather than assumed**).
 
-- Before pushing a docs-only PR: look for **tests that read that doc** with `grep -rln <doc-filename> tests/`, and run any hits.
+- Before pushing a docs-only PR: look for **tests that read that doc** with `grep -rl <doc-filename> tests/`, and run any hits.
 - The reverse direction holds too: a doc that is required to stay in sync with constants on the code side means a doc edit can break the code side's sync guard.
 
 ## 2. mermaid is verified by rendering — a clean diff can still be broken
@@ -48,7 +48,7 @@ In the body of a reference or guide aimed at operators and users, never write de
 - Document bodies describe **current behavior in the user's vocabulary**. Not "ADR-0031 retired" but "it is no longer loaded and a warning is shown."
 - Placement table: user-facing doc body ❌ / a single "See also" link at the end △ / PR body & commit message ✅ / code comments ✅.
 - Scope calibration: references & user guides = strip / concept explainers = judge per reference (design-rationale history may stay) / developer-facing deep dives = out of scope / **external vendor references (upstream issues etc. that a user can actually look up) = keep**.
-- Review gate: inspect a doc PR's added lines with `grep -iE "FP-[0-9]|PR-[A-Z0-9]|ADR-[0-9]|#[0-9]{3}"`.
+- Review gate: inspect a doc PR's added lines with `gh pr diff <N> | grep "^+" | grep -iE "FP-[0-9]|PR-[A-Z0-9]|ADR-[0-9]|#[0-9]{3}"` (FP- is an internal proposal-document id).
 
 ## Checklist
 

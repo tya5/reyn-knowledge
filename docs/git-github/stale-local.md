@@ -24,7 +24,7 @@ Observed (false finding): a reviewer fired a completeness sweep ("are there othe
 
 Observed (false alarm): on another day, after merging a signature-change PR, a local grep reported "10 remaining sites using the deleted argument" — yet the PR's full suite and CI were green, a contradiction. The cause: local HEAD was **15 commits behind**, and all 10 sites had already been migrated.
 
-> **Fire greps that back completeness or "present/absent here" claims at `git show origin/main:<path>` or `git grep <pattern> origin/main`, not at the local tree.** For ordinary exploration, staleness does little harm — but claims like "that's all of them" or "it exists here too" **become false merely because the tree is old**.
+> **Run `git fetch origin main` first, then aim greps that back completeness or "present/absent here" claims at `git show origin/main:<path>` or `git grep <pattern> origin/main`, not at the local tree.** For ordinary exploration, staleness does little harm — but claims like "that's all of them" or "it exists here too" **become false merely because the tree is old**.
 
 Adjacent: a behavior-check `python -c "import mypkg; ..."` may also **be resolving a different clone** (don't trust it until you have confirmed the resolution target with `mypkg.__file__` — failure mode 3 of [Integrity of the strip instrument](../verification/strip-instrument-integrity.md)).
 
@@ -37,7 +37,7 @@ In a phased arc (phase N+1 depends on phase N's merged code), cutting the next p
 
 It generalizes further (beyond worktree dispatch): **it happens even to docs-only PRs**. In the observed case, the diff of a "+111-line documentation PR" cut from a detached HEAD 9 commits behind actually contained **−789 lines = a nine-commit rollback**. A "+N docs" headline is no proof that a change is additive.
 
-- Sync before cutting: `git fetch origin main && git merge --ff-only origin/main`. Also include an opening `git rebase origin/main` in the implementer's brief.
+- Sync before cutting: `git fetch origin main && git merge --ff-only origin/main`. Also include an opening `git fetch origin main && git rebase origin/main` in the implementer's brief.
 - **Pre-merge tripwire**: a supposedly small PR shows unexpected deletions or a large negative line count, or `git merge-base <branch> origin/main` does not match current origin/main → stale base. Don't merge; rebase and re-take the diff.
 
 ## Accident 3 — your checkout ends up on a different branch without you noticing
@@ -84,7 +84,7 @@ A worktree **separates the working directory but does not separate much of git's
 
 ## Sources (measured during reyn development)
 
-Accident 1: #3385 (5 commits behind, false finding on a deleted symbol; the implementer also correctly refused to record an exemption, on the grounds that "an exemption entry for a nonexistent symbol is itself drift") and #3149 (15 commits behind, 10 false leftovers). Accident 2: #2817 (P4 cut from a base missing P3, contaminating even the design judgment) and #2919 (docs PR from a detached HEAD containing a −789-line revert, self-caught). Accident 3: #1069 (checkout on someone else's feature branch, caused by the shared directory — resolved by moving to dedicated clones). Accident 4: #2818 (FETCH_HEAD resolved to main; false finding and unjust attribution). Accident 5: #3082 (+107-line drift; re-anchoring found 87/100 mismatches and averted destruction; recovery 381/389) and #3213 (cross-worktree stash contamination).
+Accident 1: #3385 (5 commits behind, false finding on a deleted symbol; the implementer also correctly refused to record an exemption, on the grounds that "an exemption entry for a nonexistent symbol is itself drift") and #3149 (15 commits behind, 10 false leftovers). Accident 2: #2817 (P4 cut from a base missing P3, contaminating even the design judgment) and #2919 (docs PR from a detached HEAD containing a −789-line revert, self-caught). Accident 3: #1069 (checkout on someone else's feature branch, caused by the shared directory — resolved by moving to dedicated clones). Accident 4: #2818 (FETCH_HEAD resolved to main; false finding and unjust attribution). Accident 5: #3082 (+107-line drift; re-anchoring found 87/100 mismatches and averted destruction; recovery 381/389) and the cross-worktree stash contamination case (2026-07-28; the reference number inside the source pin is an internal work-item id, not a GitHub issue).
 
 ## Related
 
