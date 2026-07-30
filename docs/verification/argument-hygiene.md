@@ -1,6 +1,6 @@
 ---
 name: argument-hygiene
-description: Six checks to run just before a conclusion — "cannot" can never be concluded from symptoms, absence cannot tell forgotten from decided, extrapolation doesn't die in review, a conceded argument returns under a new name, only the reason gives the class, "not urgent" and "not decided" are different axes
+description: Seven checks to run just before a conclusion — "cannot" can never be concluded from symptoms, absence cannot tell forgotten from decided, extrapolation doesn't die in review, a conceded argument returns under a new name, only the reason gives the class, "not urgent" and "not decided" are different axes, a plausible causal story is not evidence
 tags: [verification, reasoning, review]
 sources:
   - feedback_cannot_claims_require_tracing_the_mechanism
@@ -9,11 +9,13 @@ sources:
   - feedback_a_conceded_argument_can_return_under_a_new_name
   - feedback_form_gives_the_instance_only_the_reason_gives_the_class
   - feedback_not_urgent_and_not_decided_are_different_axes
+  - feedback_diff_against_main_before_blaming_the_change
+  - feedback_pre_conclusion_observation_checklist
 ---
 
-# Argument Hygiene — Six Checks to Run Before Writing a Conclusion
+# Argument Hygiene — Seven Checks to Run Before Writing a Conclusion
 
-Most verification failures are planted before any measurement happens — **at the stage where the argument is assembled**. This document is six checks to run just before you write a conclusion. Every one of them comes from a measured incident.
+Most verification failures are planted before any measurement happens — **at the stage where the argument is assembled**. This document is seven checks to run just before you write a conclusion. Every one of them comes from a measured incident. All seven share a common, simple foundation, worth applying the moment you reach for a high-confidence word like "conclusion," "100%," "every one," or "consistently": **can you list, one by one, the specific observations that support this claim? Is each observation primary data (a log, a number, a grep result), or an inference from some other observation? Did you look for an observation that would refute it? If you are about to write "N of N" or "100%," did you actually look at all N yourself?**
 
 ## Check 1 — "X cannot do Y" can never be concluded from symptoms
 
@@ -77,6 +79,16 @@ Why this is fatal: **nobody reopens what looks decided**. If it is "not decided"
 - When you read someone else's "not urgent", ask which axis it is. If they cannot answer, it is the blend.
 - The moment you close a unit of work (an arc) is the most reliable point at which this distinction can be forced — settle every leftover as either "filed" or "explicitly discarded", and do not accept "in the next arc".
 
+## Check 7 — A plausible causal story is not, by itself, evidence
+
+> **An explanation of the mechanism that fits a symptom "plausibly" is not evidence that the mechanism is what actually happened.** The smoother an explanation sounds, the more tempting it is to skip verifying it — but smoothness is not a substitute for verification.
+
+Real case: a test failed while verifying a change. A causal story assembled itself immediately ("this change made the base background unreachable to the theming mechanism, so some alpha-derived colors stop resolving") — and the symptom fit that story **perfectly** (one color resolved, the other stayed at its default). Reporting it as "a design collision between two of the owner's past decisions" and asking for arbitration over a trade-off that did not exist was one step away. What stopped it was actually running `git diff origin/main -- <file> | grep '^-'` and reading the deletions: the implementation was an index-range text removal (a revert that replaces everything between two markers), and it had **swept up an unrelated CSS rule and deleted it along the way**. The failing test was failing not because of the change under test, but because **that rule had simply been deleted**.
+
+- **Before explaining a failure as caused by the change under test, look at what is actually in the diff**: run `git diff origin/main --stat`, then read the deletions (`grep '^-'`). If anything besides your intended change is present, suspect that first.
+- This check is cheap, and it prevents an entire class of self-inflicted failures that would otherwise get explained away with a good theory. A story's smoothness is not a reason to move faster — it is **the signal to verify the premise**.
+- When undoing an experiment, prefer `git checkout -- <file>` or a WIP commit over an index-range text removal — a surgical edit can delete unrelated things sitting between its markers.
+
 ## Checklist
 
 - [ ] Before writing "cannot": can you name the observed layer and the one beneath it? Did you count every dispatch path?
@@ -85,10 +97,11 @@ Why this is fatal: **nobody reopens what looks decided**. If it is "not decided"
 - [ ] Before adding a condition: is it a relabeling of a claim you conceded? Is your basis a property true of both options?
 - [ ] Before fixing: can you write "why does this exist?" in one sentence? Does that reason predict N+1?
 - [ ] Before writing "not urgent": did you attach which axis it is — decided or undecided?
+- [ ] Before blaming a failure on the change under test: did you actually read the diff's deletions? Are you concluding from a plausible story alone?
 
 ## Sources (measured during reyn development)
 
-Check 1: #3010/#3011 (the three consecutive false "cannot" claims about markitdown), #3036 (false unreachability from a gate declaration — the fifth occurrence), #3340 (false "not wired" from textual absence — the sixth). Check 2: #3334 (a deliberate Phase 2 reservation nearly misclassified as a "gap"). Check 3: #3024 ("33" passed three reviewers, killed by two greps during migration work). Check 4: #3082 (drift resistance resubmitted as decay resistance). Check 5: the why-chain arc of 2026-07-29 (the conclusion flipped four times in one day), #3457/#3458 (the correct rejection of a mechanism reuse whose reason did not transfer). Check 6: #3411/#3447 (structural work lost in the gap the blend created).
+Check 1: #3010/#3011 (the three consecutive false "cannot" claims about markitdown), #3036 (false unreachability from a gate declaration — the fifth occurrence), #3340 (false "not wired" from textual absence — the sixth). Check 2: #3334 (a deliberate Phase 2 reservation nearly misclassified as a "gap"). Check 3: #3024 ("33" passed three reviewers, killed by two greps during migration work). Check 4: #3082 (drift resistance resubmitted as decay resistance). Check 5: the why-chain arc of 2026-07-29 (the conclusion flipped four times in one day), #3457/#3458 (the correct rejection of a mechanism reuse whose reason did not transfer). Check 6: #3411/#3447 (structural work lost in the gap the blend created). Check 7: the #3326 test incident (an index-range text removal swept up an unrelated CSS rule; a plausible causal story pointed at the wrong mechanism). The common foundation of all seven checks (observation, inference, refutation, and full-count verification) is codified in reyn's operating conventions (CLAUDE.md) as a five-question checklist referenced directly from that document.
 
 ## Related
 
