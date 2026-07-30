@@ -72,9 +72,13 @@ Map: [The Map of Multi-Agent Operation Hazards](docs/orchestration/index.md) (th
 
 Tier 3 batch 1 (2026-07-30): 30 pins → 5 docs + map. Sources span the memory dirs of lead-coder, memory-curator, and several other sessions.
 
-## skills/ — more to come
+## skills/ (executable checklists)
 
-The first skill is [closing-keyword-check](skills/closing-keyword-check/skill.md) (Tier 2). Next candidates: the merge-gate family and the three-point stall measurement.
+| skill | What it walks through | Source docs |
+|---|---|---|
+| [closing-keyword-check](skills/closing-keyword-check/skill.md) | 5 steps to keep a PR's issue auto-closing from misfiring | closing-keywords |
+| [merge-gate-check](skills/merge-gate-check/skill.md) | 5 steps: confirm merged by state, kill automation, place remainders, check composition, sync local | merge-gates / stale-local / worktree-parallel |
+| [stall-triage](skills/stall-triage/skill.md) | 6 steps sorting "looks stalled," cheapest first (your own message → machine declaration → three-point measurement → attribution → ratio check → verified facts) | stall-detection |
 
 ## Notes on provenance
 

@@ -23,6 +23,10 @@ Two structures cut across everything here:
 | [The Discipline of Autonomous Operation](autonomous-operation.md) | Don't ask blocking questions; reject the fatigue reflex with numbers; full-count review before idling; never fabricate work; re-read the original goal; don't stop right after dispatching |
 | [Communication Channels and the Cost of Waiting](channels-and-cost.md) | Separate channels by purpose; pin contracts in issues; wait event-driven; run long work in the background; if you wrote "I will post it," post it in the same turn |
 
+## Executable checklist (a skill = a procedure an agent can run as-is)
+
+- [stall-triage](../../skills/stall-triage/skill.md) — 6 steps sorting "looks stalled," cheapest check first
+
 ## Reading order
 
 If you are about to build a fleet: [The Discipline of Dispatch Briefs](dispatch-briefs.md) → [Communication Channels and the Cost of Waiting](channels-and-cost.md) (the things to decide before you build the machinery). If you already operate one and your daily pain is "agents stall, falsehoods get relayed": [Detecting Stalled Agents](stall-detection.md) → [Verifying Before You Relay](relay-verification.md). The self-discipline to hand to the agents themselves is [The Discipline of Autonomous Operation](autonomous-operation.md).

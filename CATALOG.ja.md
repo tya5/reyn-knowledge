@@ -72,9 +72,13 @@ Tier2 第1弾(2026-07-30): 36 pin → 6 doc + 地図。**skills/ 第1弾**: [clo
 
 Tier3 第1弾(2026-07-30): 30 pin → 5 doc + 地図。ソースは lead-coder / memory-curator ほか各セッションの memory dir。
 
-## skills/ — 続き未着手
+## skills/(実行可能な checklist)
 
-第1弾は [closing-keyword-check](skills/closing-keyword-check/skill.ja.md)(Tier 2)。次候補は merge-gate 系・stall 検知の3点測定。
+| skill | 何の手順か | 出典 doc |
+|---|---|---|
+| [closing-keyword-check](skills/closing-keyword-check/skill.ja.md) | PR の issue 自動クローズを事故らせない5 Step | closing-keywords |
+| [merge-gate-check](skills/merge-gate-check/skill.ja.md) | merged の state 確認・自動化の停止・残件の置き場・合成検査・ローカル同期の5 Step | merge-gates / stale-local / worktree-parallel |
+| [stall-triage](skills/stall-triage/skill.ja.md) | 「止まって見える」を安い順に切り分ける6 Step(自分の送信文→機械申告→3点測定→帰属→倍率照合→verified fact) | stall-detection |
 
 ## 出典の記法について
 

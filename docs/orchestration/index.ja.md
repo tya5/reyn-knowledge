@@ -23,6 +23,10 @@ tags: [orchestration, index, overview]
 | [自走の規律](autonomous-operation.ja.md) | 塞ぐ質問をしない・疲労反射は数値で棄却・待機前の全数見直し・作業を捏造しない・原本ゴールの再読・依頼直後に止まらない |
 | [通信経路と待機コスト](channels-and-cost.ja.md) | 経路は用途で分ける・契約は issue に固定・待機はイベント駆動・長い作業は背景で・「投函する」と書いたら同ターンで投函 |
 
+## 実行可能な checklist(skill = エージェントがそのまま実行できる手順書)
+
+- [stall-triage](../../skills/stall-triage/skill.ja.md) — 「止まって見える」を安い検査から順に切り分ける6 Step
+
 ## 読む順
 
 これから fleet を組む人は、[依頼文の規律](dispatch-briefs.ja.md) → [通信経路と待機コスト](channels-and-cost.ja.md)(仕組みを作る前に決めるべきこと)。すでに運用していて「止まる・嘘が流れる」に悩む人は、[止まっているエージェントの見つけ方](stall-detection.ja.md) → [中継の検証](relay-verification.ja.md)。エージェント自身に読ませる自己規律は [自走の規律](autonomous-operation.ja.md)。

@@ -27,6 +27,7 @@ tags: [git-github, index, overview]
 ## 実行可能な checklist(skill = エージェントがそのまま実行できる手順書)
 
 - [closing-keyword-check](../../skills/closing-keyword-check/skill.ja.md) — PR を開く/マージする前の closing keyword 総点検(本領域で最も事故が多い)
+- [merge-gate-check](../../skills/merge-gate-check/skill.ja.md) — merged の state 確認・自動化の停止・残件の置き場・連続マージ後の合成検査・ローカル同期
 
 ## 読む順
 

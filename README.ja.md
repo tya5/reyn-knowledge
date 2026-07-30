@@ -21,7 +21,7 @@ docs/
 ├── verification/   # Tier 1: AI 生成物の検証パターン(strip 反証・空虚なゲート・census/structure(根拠の2分類)等)
 ├── git-github/     # Tier 2: エージェント駆動 git/CI 運用の罠(closing keyword・stale local・マージゲート等)
 └── orchestration/  # Tier 3: マルチエージェント fleet 運用(停止検知・中継の検証・依頼文・自走・通信経路)
-skills/             # 実行可能な checklist(第1弾: closing-keyword-check)
+skills/             # 実行可能な checklist(closing-keyword-check / merge-gate-check / stall-triage)
 CATALOG.md          # 全ドキュメント索引 + 出典対応表
 ```
 

@@ -27,6 +27,7 @@ Two structures run through all of it:
 ## Executable checklist (skill)
 
 - [closing-keyword-check](../../skills/closing-keyword-check/skill.md) — the full closing-keyword inspection before opening/merging a PR (the most accident-prone hazard in this area)
+- [merge-gate-check](../../skills/merge-gate-check/skill.md) — confirm merged by state, stop automation, place remainders, check the composition after serial merges, sync local
 
 ## Reading order
 

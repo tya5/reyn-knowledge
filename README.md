@@ -21,7 +21,7 @@ docs/
 ├── verification/   # Tier 1: verifying AI-produced artifacts (strip-falsification, vacuous gates, census vs structure, …)
 ├── git-github/     # Tier 2: agent-driven git/CI operation hazards (closing keywords, stale local trees, merge gates, …)
 └── orchestration/  # Tier 3: multi-agent fleet operations (stall detection, relay verification, dispatch briefs, autonomy, channels)
-skills/             # executable checklists (first: closing-keyword-check)
+skills/             # executable checklists (closing-keyword-check / merge-gate-check / stall-triage)
 CATALOG.md          # index of all documents + source mapping
 ```
 
