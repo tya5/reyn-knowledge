@@ -21,7 +21,7 @@ Roles: [Operating with separate coder / tester / reviewer agents](docs/verificat
 | [The discipline of enumeration](docs/verification/enumeration-discipline.md) | `feedback_census_vs_structure_definition_and_checked_premises` (§4) / `feedback_measured_but_the_target_was_off_my_four_instances` (surface-definition part) | #2958 #2965 #2981 #2951 #3429 #3463 |
 | [Fix-class review](docs/verification/fix-class-review.md) | `feedback_perf_fix_needs_fixclass_question_not_correctness_frame` | #2937 #2938 #2948 #2945 |
 | [Liveness is decided by the producer](docs/verification/liveness-is-producer.md) | `feedback_liveness_is_producer_not_reader` | 2026-07-04 skill sweep, #3357 #3410 #3432 #3433 #3437 |
-| [Measuring the wrong target](docs/verification/measurement-target.md) | `feedback_measured_but_the_target_was_off_my_four_instances` | #3437 #3433 #3411 #3458 #3459 #3461 #3429 #3463 |
+| [Measuring the wrong target](docs/verification/measurement-target.md) | `feedback_measured_but_the_target_was_off_my_four_instances` / `feedback_measured_label_on_a_contested_counting_rule_certifies_the_wrong_thing` | #3437 #3433 #3411 #3458 #3459 #3461 #3429 #3463 #3482 |
 | [Proving fixture provenance](docs/verification/fixture-provenance.md) | `feedback_prove_replay_fixture_was_rerecorded_by_pairing_with_old_code` | #3190 #3189 #3195 #3183 |
 | [Reviewing sweep PRs](docs/verification/sweep-reviews.md) | `feedback_sweep_pr_review_the_untouched_decision_is_invisible_in_the_diff` | #3186 |
 | [Shared-helper widening](docs/verification/shared-helper-widening.md) | `feedback_shared_accessor_must_not_outopinion_least_opinionated_caller` | #2947 |

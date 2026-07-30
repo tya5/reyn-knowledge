@@ -1,9 +1,10 @@
 ---
 name: measurement-target
-description: "Measured, but the target was off" is more dangerous than "didn't measure" — numbers come out, so you feel you have verified. Before measuring, write one sentence: does this measurement cover what the decision needs?
+description: "Measured, but the target was off" is more dangerous than "didn't measure" — numbers come out, so you feel you have verified. Before measuring, write one sentence: does this measurement cover what the decision needs? When the counting rule itself is contested, a MEASURED label certifies the wrong thing
 tags: [verification, measurement, review]
 sources:
   - feedback_measured_but_the_target_was_off_my_four_instances
+  - feedback_measured_label_on_a_contested_counting_rule_certifies_the_wrong_thing
 ---
 
 # Measuring the Wrong Target — Producing Numbers Is Not Answering the Question
@@ -57,6 +58,22 @@ Three of the four cases were caused by **using an identifier as a proxy for the 
 
 Note that errors appear not only on the low side but also on the **high side** (73 reported vs. 31 actual). Over-reporting feels harmless, but it **spends other people's time**.
 
+## When the counting rule itself is contested, a MEASURED label certifies the wrong thing
+
+There is a sharper form of target mismatch: **the number is tagged MEASURED (actually measured) before the counting rule — what counts as one item, what counts as the same thing — has even been settled.**
+
+Real case: three people gave three different numbers for the same question — 16, 4 pairs (9 parameters), and 3 pairs (6 parameters). **All three were genuine measurements, in the sense that each was actually run and produced a number. But every one of them was a function of a choice — what to treat as the same thing — that was still unsettled.** One party's own analysis (adopted):
+
+> **The MEASURED label certifies "I didn't guess." But when the counting rule is contested, "I didn't guess" can be true while "the number is still an opinion" is also true. The label proves only the former; the reader reads it as proving the latter too.**
+
+- **When the counting rule is contested, write MEASURED per rule**: pin the rule to the number, e.g. "MEASURED (exact match, including the adapter-method layer): 3 pairs."
+- **If the rule is not yet settled, don't emit a total. Emit the rule plus concrete examples**: "A and B have an identical consumer set" survives even if the rule later changes; "16" does not.
+- **If your own number later shrinks, retract it explicitly.** In the real case, the earlier number (16) had already been reported to the owner and was not corrected even after the settled value came out — it was retracted only when someone else's PR pointed it out.
+
+**A secondary lesson — fixing "too narrow" by "widening" only flips the direction of the incompleteness; it does not remove it.** In the real case, a tally that had measured incompletely from an internal viewpoint was "fixed" by re-measuring from an external viewpoint **only** — one incomplete set was simply swapped for a different incomplete one. The correct altitude was not to pick narrow or wide, but to **count both viewpoints as separate targets**.
+
+**Refute by naming one concrete thing the rule wrongly merges, not by trading totals.** Competing totals can go back and forth indefinitely. What actually settled it was one side showing the other's relaxation **broken by an example**: "measured from the external viewpoint alone, these two look like the same set. But one of them is also read by a different consumer, so they are not being carried to the same place" — that single blow settled the altitude question. **One counterexample is faster than trading numbers, and it is checkable.**
+
 ## Attribute it to procedure, not judgment
 
 To close, one point that helps a measurement culture take root. When an implementer refused a mechanical rename and discovered a doubly stale state, the reviewer praised it as "good judgment." The implementer's correction:
@@ -72,10 +89,12 @@ Writing "that person has good judgment" does not reproduce. Writing "**when that
 - [ ] When handing a measurement to someone, did you attach the tree and the commit? Do you have grounds for the assertive form?
 - [ ] Did you tag your own claim as MEASURED / READ / INFERRED (are you handing over INFERRED dressed up as MEASURED)?
 - [ ] Is the predicate 1:1 with the target? If you measured by identifier, did you cross-check one item by content?
+- [ ] When the counting rule is contested: did you write MEASURED per rule? If the rule was unsettled, did you give the rule plus examples instead of a total?
+- [ ] Did you refute by naming one concrete case the other party's rule wrongly merges or splits, rather than trading totals?
 
 ## Sources (measured during reyn development)
 
-Four in one day: #3437 (INFERRED dressed up as an instruction), #3433 (line numbers / two-dot diff), the memory-index audit (convention scan, 73→31). Target state and measuring harm: #3411. Two-party collision: #3458/#3459 (PR #3461, main and branch as different targets), plus the simultaneous stale local (#3433 family; local sync after gh merge is covered under Tier 2, git-github, planned). Coarse predicate: suite watcher (2026-07-29). Attribution to procedure: self-reports by the agents responsible for #3429/#3463.
+Four in one day: #3437 (INFERRED dressed up as an instruction), #3433 (line numbers / two-dot diff), the memory-index audit (convention scan, 73→31). Target state and measuring harm: #3411. Two-party collision: #3458/#3459 (PR #3461, main and branch as different targets), plus the simultaneous stale local (#3433 family; local sync after gh merge is covered under Tier 2, git-github, planned). Coarse predicate: suite watcher (2026-07-29). Attribution to procedure: self-reports by the agents responsible for #3429/#3463. Counting rules: #3482 (2026-07-30; three numbers — 16, 4 pairs, 3 pairs — for the same question, including an unretracted overcount).
 
 ## Related
 
