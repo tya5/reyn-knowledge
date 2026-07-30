@@ -58,13 +58,23 @@ fixture-provenance には `feedback_verify_failure_claims_by_observation_not_inf
 
 Tier2 第1弾(2026-07-30): 36 pin → 6 doc + 地図。**skills/ 第1弾**: [closing-keyword-check](skills/closing-keyword-check/skill.ja.md)(実行可能な checklist)。
 
-## docs/orchestration/(Tier 3 — マルチエージェント運用)— 未着手
+## docs/orchestration/(Tier 3 — マルチエージェント fleet 運用)
 
-候補 pin(約14件): `background_pytest_poll_stall` / `review_menu_before_standby` / `peer_silent_stall_detection` / `shared_venv_worktree_identity`(一部は Tier 1 側で言及済み)ほか。
+地図: [複数エージェント運用の罠](docs/orchestration/index.ja.md)(5 doc の構造。メタ文書)
 
-## skills/ — 未着手
+| ドキュメント | ソース pin | 主な出典 issue |
+|---|---|---|
+| [止まっているエージェントの見つけ方](docs/orchestration/stall-detection.ja.md) | `feedback_coder_background_pytest_poll_stall_pattern` / `feedback_running_task_overrun_known_duration_is_hung_not_slow` / `feedback_sonnet_peer_stalls_at_compaction` / `feedback_peer_silent_local_work_invisible_to_watchers` / `feedback_repeated_status_text_requires_active_flag_check` / `feedback_stall_idle_session_declared_not_broker_inferred` / `feedback_verify_peer_progress_not_assume_dispatch` | #3083 #3086 #3090 #3091 #3093 #2259 #1495 #2840 #2846 #2296 |
+| [中継の検証](docs/orchestration/relay-verification.ja.md) | `feedback_probe_infra_state_before_propagating_peer_claim` / `feedback_peer_broker_articulate_verify_obligation` / `feedback_broker_numbers_file_copy_only` / `feedback_confound_exclusion_before_propagating_peer_finding` | #187 |
+| [依頼文の規律](docs/orchestration/dispatch-briefs.ja.md) | `feedback_mirror_brief_must_name_the_invariant` / `feedback_dispatch_brief_must_require_doc_for_userfacing` / `feedback_sub_agent_dispatch_assertion_shape_verify` / `feedback_sub_agent_primary_evidence_cross_reference` / `feedback_go_decision_not_recommendation_for_planfirst_peer` | #2620 #3045 #2296 |
+| [自走の規律](docs/orchestration/autonomous-operation.ja.md) | `feedback_no_blocking_askuser_in_autonomous_mode` / `feedback_no_fatigue_reflex_defer` / `feedback_no_fatigue_defer_harness_autocontinues` / `feedback_review_menu_before_standby` / `feedback_empty_settled_bucket_standby` / `feedback_milestone_goal_recheck_against_ticket` / `feedback_parallel_work_after_dispatch` | #2259 #1599 #2264 |
+| [通信経路と待機コスト](docs/orchestration/channels-and-cost.ja.md) | `feedback_inter_session_communication_paths` / `feedback_canonical_contract_in_issue_not_broker` / `feedback_polling_vs_llm_cost_tradeoff` / `feedback_long_running_commands_background_not_foreground` / `feedback_no_sync_launch_long_work_blocks_conversation` / `feedback_broker_post_articulate_action_gap` / `feedback_no_idle_loops_only_session_watcher` | #1135 #993 #995 #998 |
 
-実務性の高いものから checklist / skill 化する(Tier 2 の closing-keyword・merge-gate 系が有力)。
+Tier3 第1弾(2026-07-30): 30 pin → 5 doc + 地図。ソースは lead-coder / memory-curator ほか各セッションの memory dir。
+
+## skills/ — 続き未着手
+
+第1弾は [closing-keyword-check](skills/closing-keyword-check/skill.ja.md)(Tier 2)。次候補は merge-gate 系・stall 検知の3点測定。
 
 ## 出典の記法について
 
